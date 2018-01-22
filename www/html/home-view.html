@@ -3,38 +3,13 @@
         <v-card-title>
             Description...
         </v-card-title>
-        <v-card-text>
-            <h3>Client</h3>
-        </v-card-text>
-        <a href="https://vuejs.org/" target="_blank">
-            <v-card-media src="/images/vuejs.png" alt="Vuejs" height="250px"></v-card-media>
-        </a>
-        <a href="https://vuetifyjs.com/" target="_blank">
-            <v-card-media src="/images/vuetify.png" alt="Vuetify" height="250px"></v-card-media>
-        </a>
-        <v-card-text>
-            <h3>Middleware</h3>
-        </v-card-text>
-        <a href="http://expressjs.com/" target="_blank">
-            <v-card-media src="/images/expressjs.png" alt="Nodejs" height="250px"></v-card-media>
-        </a>
-        <a href="http://www.passportjs.org/" target="_blank">
-            <v-card-media src="/images/passportjs.png" alt="Passportjs" height="250px"></v-card-media>
-        </a>
-        <a href="https://jwt.io/" target="_blank">
-            <v-card-media src="/images/jwt.png" alt="Nodejs" height="250px"></v-card-media>
-        </a>
-        <v-card-text>
-            <h3>Serveur</h3>
-        </v-card-text>
-        <a href="https://nodejs.org" target="_blank">
-            <v-card-media src="/images/nodejs.png" alt="Nodejs" height="250px"></v-card-media>
-        </a>
-        <v-card-text>
-            <h3>Database</h3>
-        </v-card-text>
-        <a href="https://pouchdb.com/" target="_blank">
-            <v-card-media src="/images/pouchdb.png" alt="Passportjs" height="250px"></v-card-media>
-        </a>
+        <div v-for="group in groups">
+            <v-card-text>
+                <h3>{{group.label}}</h3>
+            </v-card-text>
+            <a v-for="item in group.items" :href="item.link" target="_blank">
+                <v-card-media :src="item.image" :alt="item.description" height="250px"></v-card-media>
+            </a>
+        </div>
     </v-card>
 </div>

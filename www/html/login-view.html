@@ -4,8 +4,8 @@
             <h3>{{$t('LABEL_AUTHENTIFICATION')}}</h3>
         </v-card-title>
         <v-card-text>
-            <v-text-field @keyup.enter="authenticate()" label="Login" v-model="login" required></v-text-field>
-            <v-text-field @keyup.enter="authenticate()" label="Password" v-model="password" required></v-text-field>
+            <v-text-field @keyup.enter="authenticate()" :label="$t('LABEL_LOGIN')" v-model="login" required></v-text-field>
+            <v-text-field @keyup.enter="authenticate()" :label="$t('LABEL_PASSWORD')" v-model="password" required type="password"></v-text-field>
             <div v-if="errorCode.length > 0" style="color:red;">
                 {{$t('ERROR_'+errorCode)}}
             </div>

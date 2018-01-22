@@ -1,11 +1,36 @@
 const HomeView = Fwk.util.ComponentUtils.getComponent("home-view", {
     data: function () {
         return {
-
+            groups: [
+                {
+                    label: "Client",
+                    items: [
+                        { link: "https://vuejs.org/", image: "/images/vuejs.png", description: "Vue.js" },
+                        { link: "https://vuetifyjs.com/", image: "/images/vuetify.png", description: "Vuetify" }
+                    ]
+                },
+                {
+                    label: "Middleware",
+                    items: [
+                        { link: "http://expressjs.com/", image: "/images/expressjs.png", description: "Express" },
+                        { link: "http://www.passportjs.org/", image: "/images/passportjs.png", description: "Passport" },
+                        { link: "https://github.com/auth0/node-jsonwebtoken", image: "/images/jwt.png", description: "JSON Web Tokens" }
+                    ]
+                },
+                {
+                    label: "Server",
+                    items: [
+                        { link: "https://nodejs.org", image: "/images/nodejs.png", description: "Node.js" },
+                    ]
+                },
+                {
+                    label: "Database",
+                    items: [
+                        { link: "https://pouchdb.com/", image: "/images/pouchdb.png", description: "PouchDB" },
+                    ]
+                }
+            ]
         }
-    },
-    methods: {
-
     }
 });
 

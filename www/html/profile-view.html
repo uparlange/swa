@@ -1,7 +1,7 @@
 <div>
     <v-card>
         <v-card-title>
-            <h3>Informations</h3>
+            <h3>{{$t('LABEL_INFORMATIONS')}}</h3>
         </v-card-title>
         <v-card-text>
 
@@ -9,11 +9,11 @@
     </v-card>
     <v-card>
         <v-card-title>
-            <h3>Actions</h3>
+            <h3>{{$t('LABEL_ACTIONS')}}</h3>
         </v-card-title>
         <v-card-text>
             <div>
-                <a @click="logOut()">Disconnect</router-link>
+                <a @click="logOut()">{{$t('LABEL_DISCONNECT')}}</router-link>
             </div>
         </v-card-text>
     </v-card>
