@@ -1,18 +1,16 @@
-// external dependencies
-const PouchDB = require("pouchdb");
-PouchDB.plugin(require("pouchdb-find"));
-PouchDB.plugin(require("pouchdb-adapter-memory"));
+// application dependencies
+const PouchDB = require("./PouchDB");
 
 // body
-const mockUser = {
-    "_id": "jdoe",
-    "login": "login",
-    "password": "password"
+const mockData = {
+    _id: "jdoe",
+    login: "login",
+    password: "password"
 };
-const db = new PouchDB("database/credentials", { adapter: "memory" });
+const db = PouchDB.getDatabase("db/credentials");
 db.info().then((result) => {
     if (result.doc_count === 0) {
-        db.put(mockUser);
+        db.put(mockData);
     }
 });
 

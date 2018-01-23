@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const Passport = require("./Passport");
 const CredentialDAO = require("./CredentialDAO");
 const UserDAO = require("./UserDAO");
+const EventDAO = require("./EventDAO");
 
 // exported methods
 exports.init = function (instance) {
@@ -31,5 +32,10 @@ exports.init = function (instance) {
     // get
     instance.get("/services/profile", Passport.AUTHENTICATED_SERVICE, function (req, res) {
         res.json(req.user);
+    });
+    instance.get("/services/events", Passport.AUTHENTICATED_SERVICE, function (req, res) {
+        EventDAO.findByUserAndDate(req.user._id, req.query.date).then((events) => {
+            res.json(events);
+        });
     });
 }

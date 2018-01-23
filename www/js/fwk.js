@@ -47,7 +47,7 @@ const Fwk = {
                     });
                     Fwk.util.HttpUtils.call(request).then((response) => {
                         this._token = response.body.token;
-                        Fwk.manager.EventManager.emit("loggedIn", response.body.profile);
+                        Fwk.manager.EventManager.emit("FWK_LOGGED_IN", response.body.profile);
                     }, (response) => {
                         reject(response);
                     });
@@ -56,11 +56,11 @@ const Fwk = {
             },
             logOut: function () {
                 this._token = null;
-                Fwk.manager.EventManager.emit("loggedOut");
+                Fwk.manager.EventManager.emit("FWK_LOGGED_OUT");
             },
             sessionTimedOut: function () {
                 this._token = null;
-                Fwk.manager.EventManager.emit("sessionTimedOut");
+                Fwk.manager.EventManager.emit("FWK_SESSION_TIMED_OUT");
             }
         },
         EventManager: {
@@ -91,9 +91,12 @@ const Fwk = {
         HttpUtils: {
             call: function (request) {
                 return new Promise(function (resolve, reject) {
+                    Fwk.manager.EventManager.emit("FWK_RESOURCE_LOADING_START");
                     request.then((response) => {
+                        Fwk.manager.EventManager.emit("FWK_RESOURCE_LOADING_STOP");
                         resolve(response);
                     }, (response) => {
+                        Fwk.manager.EventManager.emit("FWK_RESOURCE_LOADING_STOP");
                         if (Fwk.manager.SecurityManager.getToken() != null && response.status === 401) {
                             Fwk.manager.SecurityManager.sessionTimedOut();
                         } else {

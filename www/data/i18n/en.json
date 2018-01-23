@@ -8,5 +8,9 @@
     "LABEL_DISCONNECT": "Disconnect",
     "LABEL_INFORMATIONS": "Informations",
     "LABEL_ACTIONS": "Actions",
+    "LABEL_CLIENT": "Client",
+    "LABEL_MIDDLEWARE": "Middleware",
+    "LABEL_DATABASE": "Database",
+    "LABEL_NOTHING_TO_NOTICE": "Nothing to notice ?!?",
     "ERROR_INVALID_LOGIN_OR_PASSWORD": "Invalid login or password"
 }

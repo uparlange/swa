@@ -26,7 +26,7 @@ exports.start = function () {
         ExpressServices.init(instance);
         // start server
         instance.listen((process.env.PORT || 8080), () => {
-            //console.log("Express is running on port " + serverPort);
+            
         });
     }
 };

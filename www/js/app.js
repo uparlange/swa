@@ -3,30 +3,25 @@ const HomeView = Fwk.util.ComponentUtils.getComponent("home-view", {
         return {
             groups: [
                 {
-                    label: "Clients",
+                    labelKey: "LABEL_CLIENT",
                     items: [
                         { link: "https://vuejs.org/", image: "/images/vuejs.png", description: "Vue.js" },
                         { link: "https://vuetifyjs.com/", image: "/images/vuetify.png", description: "Vuetify" }
                     ]
                 },
                 {
-                    label: "Middleware",
+                    labelKey: "LABEL_MIDDLEWARE",
                     items: [
-                        { link: "http://expressjs.com/", image: "/images/expressjs.png", description: "Express" },
+                        { link: "https://github.com/auth0/node-jsonwebtoken", image: "/images/jwt.png", description: "JSON Web Tokens" },
                         { link: "http://www.passportjs.org/", image: "/images/passportjs.png", description: "Passport" },
-                        { link: "https://github.com/auth0/node-jsonwebtoken", image: "/images/jwt.png", description: "JSON Web Tokens" }
+                        { link: "http://expressjs.com/", image: "/images/expressjs.png", description: "Express" },
+                        { link: "https://nodejs.org", image: "/images/nodejs.png", description: "Node.js" }
                     ]
                 },
                 {
-                    label: "Server",
+                    labelKey: "LABEL_DATABASE",
                     items: [
-                        { link: "https://nodejs.org", image: "/images/nodejs.png", description: "Node.js" },
-                    ]
-                },
-                {
-                    label: "Database",
-                    items: [
-                        { link: "https://pouchdb.com/", image: "/images/pouchdb.png", description: "PouchDB" },
+                        { link: "https://pouchdb.com/", image: "/images/pouchdb.png", description: "PouchDB" }
                     ]
                 }
             ]
@@ -82,7 +77,37 @@ const ProfileView = Fwk.util.ComponentUtils.getComponent("profile-view", {
 const MySpaceView = Fwk.util.ComponentUtils.getComponent("myspace-view", {
     data: function () {
         return {
-            locale: Fwk.manager.I18nManager.getLocale()
+            locale: Fwk.manager.I18nManager.getLocale(),
+            selectedDate: new Date().toISOString(),
+            events: []
+        }
+    },
+    created: function () {
+        this.refresh();
+    },
+    watch: {
+        selectedDate: function (newVal, oldVal) {
+            this.refresh();
+        }
+    },
+    methods: {
+        getIcon: function (type) {
+            let icon = null;
+            switch (type) {
+                case "BIRTHDAY": icon = "card_giftcard"; break;
+                default: icon = "note"; break;
+            }
+            return icon;
+        },
+        refresh: function () {
+            const request = this.$http.get("/services/events?date=" + this.selectedDate, {
+                headers: {
+                    "Authorization": "Bearer " + Fwk.manager.SecurityManager.getToken()
+                }
+            })
+            Fwk.util.HttpUtils.call(request).then((response) => {
+                this.events = response.body;
+            });
         }
     }
 });
@@ -109,21 +134,32 @@ const MainView = new Vue({
     data: function () {
         return {
             profile: "",
-            drawer: null
+            drawer: null,
+            loading: false
         }
     },
     created: function () {
-        Fwk.manager.EventManager.on("loggedIn", (user) => {
+        Fwk.manager.EventManager.on("", (user) => {
             this.profile = user.firstName + " " + user.lastName;
             this.$router.push("/myspace");
         });
-        Fwk.manager.EventManager.on("sessionTimedOut", () => {
+        Fwk.manager.EventManager.on("FWK_LOGGED_IN", (user) => {
+            this.profile = user.firstName + " " + user.lastName;
+            this.$router.push("/myspace");
+        });
+        Fwk.manager.EventManager.on("FWK_SESSION_TIMED_OUT", () => {
             this.profile = "";
             this.$router.push("/login");
         });
-        Fwk.manager.EventManager.on("loggedOut", () => {
+        Fwk.manager.EventManager.on("FWK_LOGGED_OUT", () => {
             this.profile = "";
             this.$router.push("/home");
+        });
+        Fwk.manager.EventManager.on("FWK_RESOURCE_LOADING_START", () => {
+            this.loading = true;
+        });
+        Fwk.manager.EventManager.on("FWK_RESOURCE_LOADING_STOP", () => {
+            this.loading = false;
         });
     },
     methods: {

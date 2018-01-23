@@ -5,7 +5,7 @@
         </v-card-title>
         <div v-for="group in groups">
             <v-card-text>
-                <h3>{{group.label}}</h3>
+                <h3>{{$t(group.labelKey)}}</h3>
             </v-card-text>
             <a v-for="item in group.items" :href="item.link" target="_blank">
                 <v-card-media :src="item.image" :alt="item.description" height="250px"></v-card-media>

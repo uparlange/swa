@@ -43,8 +43,14 @@
             <v-toolbar dark fixed app color="primary">
                 <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
                 <v-toolbar-title>
-                    SWA (Simple Web Application)
+                    SWA
                 </v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-toolbar-items>
+                    <v-btn flat v-if="loading">
+                        <v-progress-circular indeterminate></v-progress-circular>
+                    </v-btn>
+                </v-toolbar-items>
             </v-toolbar>
             <v-content>
                 <v-container fluid>
