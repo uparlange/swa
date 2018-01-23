@@ -8,7 +8,6 @@ const ExpressStatics = require("./ExpressStatics");
 const ExpressServices = require("./ExpressServices");
 
 // body
-const serverPort = 3000;
 let instance = null;
 
 // exported methods
@@ -26,7 +25,7 @@ exports.start = function () {
         // init services
         ExpressServices.init(instance);
         // start server
-        instance.listen(serverPort, () => {
+        instance.listen((process.env.PORT || 8080), () => {
             //console.log("Express is running on port " + serverPort);
         });
     }
