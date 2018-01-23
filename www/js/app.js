@@ -3,7 +3,7 @@ const HomeView = Fwk.util.ComponentUtils.getComponent("home-view", {
         return {
             groups: [
                 {
-                    label: "Client",
+                    label: "Clients",
                     items: [
                         { link: "https://vuejs.org/", image: "/images/vuejs.png", description: "Vue.js" },
                         { link: "https://vuetifyjs.com/", image: "/images/vuetify.png", description: "Vuetify" }
