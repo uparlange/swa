@@ -1,5 +1,5 @@
 // external dependencies
-const PouchDB = require("pouchdb");
+const PouchDB = require("pouchdb-node");
 PouchDB.plugin(require("pouchdb-find"));
 PouchDB.plugin(require("pouchdb-adapter-memory"));
 //PouchDB.debug.enable("pouchdb:find");
