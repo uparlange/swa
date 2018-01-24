@@ -4,7 +4,7 @@
 TODO...
 
 ## Try it ##
-Try it : https://s-w-a.herokuapp.com
+https://s-w-a.herokuapp.com
 
 # Technical #
 TODO...
