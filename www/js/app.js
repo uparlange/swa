@@ -78,7 +78,7 @@ const MySpaceView = Fwk.util.ComponentUtils.getComponent("myspace-view", {
     data: function () {
         return {
             locale: Fwk.manager.I18nManager.getLocale(),
-            selectedDate: new Date().toISOString(),
+            selectedDate: sessionStorage.getItem("MySpaceView_selectedDate") || new Date().toISOString(),
             events: []
         }
     },
@@ -100,6 +100,7 @@ const MySpaceView = Fwk.util.ComponentUtils.getComponent("myspace-view", {
             return icon;
         },
         refresh: function () {
+            sessionStorage.setItem("MySpaceView_selectedDate", this.selectedDate);
             const request = this.$http.get("/services/events?date=" + this.selectedDate, {
                 headers: {
                     "Authorization": "Bearer " + Fwk.manager.SecurityManager.getToken()
