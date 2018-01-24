@@ -34,17 +34,17 @@ const LoginView = Fwk.util.ComponentUtils.getComponent("login-view", {
         return {
             login: "",
             password: "",
-            errorCode: ""
+            errorMessage: ""
         }
     },
     methods: {
         authenticate: function () {
             if (this.login.length > 0 && this.password.length > 0) {
-                this.errorCode = "";
+                this.errorMessage = "";
                 Fwk.manager.SecurityManager.logIn(this.login, this.password).then((response) => {
                     // Nothing
                 }, (response) => {
-                    this.errorCode = response.body.code;
+                    this.errorMessage = response.body.message;
                 })
             }
         }
@@ -64,7 +64,7 @@ const ProfileView = Fwk.util.ComponentUtils.getComponent("profile-view", {
             }
         })
         Fwk.util.HttpUtils.call(request).then((response) => {
-            this.profile = response.body;
+            this.profile = response.body.data.user;
         });
     },
     methods: {
@@ -106,7 +106,7 @@ const MySpaceView = Fwk.util.ComponentUtils.getComponent("myspace-view", {
                 }
             })
             Fwk.util.HttpUtils.call(request).then((response) => {
-                this.events = response.body;
+                this.events = response.body.data.events;
             });
         }
     }

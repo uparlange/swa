@@ -1,6 +1,7 @@
 // external dependencies
 const express = require("express");
 const bodyParser = require("body-parser");
+const compression = require("compression");
 
 // application dependencies
 const Passport = require("./Passport");
@@ -20,6 +21,7 @@ exports.start = function () {
             extended: true
         }));
         instance.use(bodyParser.json());
+        instance.use(compression());
         // init statics
         ExpressStatics.init(instance);
         // init services

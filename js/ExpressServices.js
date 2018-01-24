@@ -19,23 +19,38 @@ exports.init = function (instance) {
                 };
                 const token = jwt.sign(payload, Passport.SECRET_OR_KEY);
                 UserDAO.findById(payload.id).then((user) => {
-                    res.json({ message: "ok", token: token, profile: user });
+                    res.json({
+                        message: "OK",
+                        data: {
+                            token: token,
+                            user: user
+                        }
+                    });
                 });
             } else {
                 res.status(401).json({
-                    message: "Invalid login or password",
-                    code: "INVALID_LOGIN_OR_PASSWORD"
+                    message: "INVALID_LOGIN_OR_PASSWORD"
                 });
             }
         });
     });
     // get
     instance.get("/services/profile", Passport.AUTHENTICATED_SERVICE, function (req, res) {
-        res.json(req.user);
+        res.json({
+            message: "OK",
+            data: {
+                user: req.user
+            }
+        });
     });
     instance.get("/services/events", Passport.AUTHENTICATED_SERVICE, function (req, res) {
         EventDAO.findByUserAndDate(req.user._id, req.query.date).then((events) => {
-            res.json(events);
+            res.json({
+                message: "OK",
+                data: {
+                    events: events
+                }
+            });
         });
     });
 }

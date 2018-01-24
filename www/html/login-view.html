@@ -6,8 +6,8 @@
         <v-card-text>
             <v-text-field @keyup.enter="authenticate()" :label="$t('LABEL_LOGIN')" v-model="login" required></v-text-field>
             <v-text-field @keyup.enter="authenticate()" :label="$t('LABEL_PASSWORD')" v-model="password" required type="password"></v-text-field>
-            <div v-if="errorCode.length > 0" style="color:red;">
-                {{$t('ERROR_'+errorCode)}}
+            <div v-if="errorMessage.length > 0" style="color:red;">
+                {{$t('ERROR_'+errorMessage)}}
             </div>
         </v-card-text>
         <v-card-actions>

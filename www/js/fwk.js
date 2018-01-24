@@ -46,8 +46,8 @@ const Fwk = {
                         password: password
                     });
                     Fwk.util.HttpUtils.call(request).then((response) => {
-                        this._token = response.body.token;
-                        Fwk.manager.EventManager.emit("FWK_LOGGED_IN", response.body.profile);
+                        this._token = response.body.data.token;
+                        Fwk.manager.EventManager.emit("FWK_LOGGED_IN", response.body.data.user);
                     }, (response) => {
                         reject(response);
                     });
