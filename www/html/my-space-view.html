@@ -1,0 +1,11 @@
+<div>
+    <v-card>
+        <v-breadcrumbs divider="/">
+            <v-breadcrumbs-item v-for="item in items" :key="item.label">
+                <router-link :to="item.link">{{ item.label }}</router-link>
+            </v-breadcrumbs-item>
+        </v-breadcrumbs>
+    </v-card>
+    <div style="height:10px;"></div>
+    <router-view></router-view>
+</div>

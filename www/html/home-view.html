@@ -1,15 +1,21 @@
 <div>
     <v-card>
         <v-card-title>
-            Description...
+            <h3>Simple Web Application</h3>
         </v-card-title>
-        <div v-for="group in groups">
-            <v-card-text>
+        <v-card-text>
+            Description...
+        </v-card-text>
+    </v-card>
+    <div v-for="group in groups" :key="group.labelKey">
+        <div style="height:10px;"></div>
+        <v-card>
+            <v-card-title>
                 <h3>{{$t(group.labelKey)}}</h3>
-            </v-card-text>
-            <a v-for="item in group.items" :href="item.link" target="_blank">
+            </v-card-title>
+            <a v-for="item in group.items" :href="item.link" target="_blank" :key="item.description">
                 <v-card-media :src="item.image" :alt="item.description" height="250px"></v-card-media>
             </a>
-        </div>
-    </v-card>
+        </v-card>
+    </div>
 </div>

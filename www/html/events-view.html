@@ -1,0 +1,26 @@
+<div>
+    <v-card>
+        <v-card-text>
+            <v-dialog v-model="modal" lazy full-width width="330px">
+                <v-text-field slot="activator" v-model="selectedDate" prepend-icon="event" readonly></v-text-field>
+                <v-date-picker v-model="selectedDate" scrollable></v-date-picker>
+            </v-dialog>
+        </v-card-text>
+    </v-card>
+    <div style="height:10px;"></div>
+    <v-card>
+        <v-list two-line>
+            <template v-for="(event, index) in events" :key="event._id">
+                <v-divider v-if="index > 0" inset="true"></v-divider>
+                <v-list-tile avatar>
+                    <v-list-tile-avatar>
+                        <v-icon>{{getIcon(event.type)}}</v-icon>
+                    </v-list-tile-avatar>
+                    <v-list-tile-content>
+                        <v-list-tile-title>{{event.title}}</v-list-tile-title>
+                        <v-list-tile-sub-title>{{event.description || "..."}}</v-list-tile-sub-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+        </v-list>
+    </v-card>
+</div>
