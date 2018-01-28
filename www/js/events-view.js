@@ -1,10 +1,10 @@
 "use strict";
 
 (function (app) {
-    app.Fwk.manager.ComponentManager.register("EventsView", {
+    app.fwkRegisterRouteComponent("EventsView", {
         data: function () {
             return {
-                locale: this.fwkGetCurrentLocale(),
+                locale: app.fwkGetCurrentLocale(),
                 selectedDate: sessionStorage.getItem("EventsView_selectedDate") || new Date().toISOString(),
                 events: [],
                 modal: false
@@ -31,10 +31,10 @@
             _refresh: function () {
                 sessionStorage.setItem("EventsView_selectedDate", this.selectedDate);
                 const request = Vue.http.get("/services/events?date=" + this.selectedDate);
-                this.fwkCallService(request).then((response) => {
+                app.fwkCallService(request).then((response) => {
                     const events = response.body.data.events;
                     if (events.length == 0) {
-                        events.push({ title: this.fwkGetLabel({ key: "LABEL_NOTHING_TO_NOTICE" }) })
+                        events.push({ title: app.fwkGetLabel({ key: "LABEL_NOTHING_TO_NOTICE" }) })
                     }
                     this.events = events;
                 });

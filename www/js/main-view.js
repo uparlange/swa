@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.Fwk.manager.ComponentManager.register("MainView", {
+    app.fwkRegisterRouteComponent("MainView", {
         data: function () {
             return {
                 drawer: null,
@@ -14,16 +14,16 @@
             }
         },
         created: function () {
-            this.fwkGetEventBus().on("FWK_USER_SIGNED_IN", (user) => {
+            app.fwkGetEventBus().on("FWK_USER_SIGNED_IN", (user) => {
                 this._refreshProfileMenuLabel(user.firstName + " " + user.lastName);
             });
-            this.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
+            app.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
                 this._refreshProfileMenuLabel();
             });
-            this.fwkGetEventBus().on("FWK_RESOURCE_LOADING_START", () => {
+            app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_START", () => {
                 this.loading = true;
             });
-            this.fwkGetEventBus().on("FWK_RESOURCE_LOADING_STOP", () => {
+            app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_STOP", () => {
                 this.loading = false;
             });
             this._refreshProfileMenuLabel();

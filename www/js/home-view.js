@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.Fwk.manager.ComponentManager.register("HomeView", {
+    app.fwkRegisterRouteComponent("HomeView", {
         data: function () {
             return {
                 groups: [

@@ -1,21 +1,21 @@
 "use strict";
 
 (function (app) {
-    app.Fwk.manager.ComponentManager.register("MySpaceView", {
+    app.fwkRegisterRouteComponent("MySpaceView", {
         data: function () {
             return {
                 items: []
             }
         },
         created: function () {
-            this._refreshBreadcrumb(this.fwkGetCurrentRoute());
+            this._refreshBreadcrumb(app.fwkGetCurrentRoute());
             this._FWK_ROUTE_CHANGED_handler = (event) => {
                 this._refreshBreadcrumb(event.to);
             };
-            this.fwkGetEventBus().on("FWK_ROUTE_CHANGED", this._FWK_ROUTE_CHANGED_handler);
+            app.fwkGetEventBus().on("FWK_ROUTE_CHANGED", this._FWK_ROUTE_CHANGED_handler);
         },
         beforeDestroy() {
-            this.fwkGetEventBus().off("FWK_ROUTE_CHANGED", this._FWK_ROUTE_CHANGED_handler);
+            app.fwkGetEventBus().off("FWK_ROUTE_CHANGED", this._FWK_ROUTE_CHANGED_handler);
         },
         methods: {
             _refreshBreadcrumb: function (path) {

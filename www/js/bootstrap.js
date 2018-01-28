@@ -8,38 +8,38 @@
         },
         {
             path: "/home",
-            component: app.Fwk.manager.ComponentManager.define({ id: "HomeView" }),
+            component: app.fwkDefineRouteComponent({ id: "HomeView" }),
             default: true
         },
         {
             path: "/login",
-            component: app.Fwk.manager.ComponentManager.define({ id: "LoginView", templateUrl: "html/sign-in-up-view.html" }),
+            component: app.fwkDefineRouteComponent({ id: "LoginView", templateUrl: "html/sign-in-up-view.html" }),
             login: true
         },
         {
             path: "/register",
-            component: app.Fwk.manager.ComponentManager.define({ id: "RegisterView", templateUrl: "html/sign-in-up-view.html" })
+            component: app.fwkDefineRouteComponent({ id: "RegisterView", templateUrl: "html/sign-in-up-view.html" })
         },
         {
             path: "/myspace",
-            component: app.Fwk.manager.ComponentManager.define({ id: "MySpaceView" }),
+            component: app.fwkDefineRouteComponent({ id: "MySpaceView" }),
             default: true,
             secure: true,
             children: [
                 {
                     path: "events",
-                    component: app.Fwk.manager.ComponentManager.define({ id: "EventsView" }),
+                    component: app.fwkDefineRouteComponent({ id: "EventsView" }),
                     secure: true
                 },
                 {
                     path: "profile",
-                    component: app.Fwk.manager.ComponentManager.define({ id: "ProfileView" }),
+                    component: app.fwkDefineRouteComponent({ id: "ProfileView" }),
                     secure: true
                 }
             ]
         }
     ];
-    app.Fwk.manager.ComponentManager.bootstrap({
+    app.fwkBootstrapComponent({
         id: "MainView",
         routes: routes,
         locale: "en"
