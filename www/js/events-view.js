@@ -1,10 +1,10 @@
 "use strict";
 
 (function (app) {
-    app.EventsView = {
+    app.Fwk.manager.ComponentManager.register("EventsView", {
         data: function () {
             return {
-                locale: app.Fwk.manager.I18nManager.getLocale(),
+                locale: this.fwkGetCurrentLocale(),
                 selectedDate: sessionStorage.getItem("EventsView_selectedDate") || new Date().toISOString(),
                 events: [],
                 modal: false
@@ -30,19 +30,15 @@
             },
             _refresh: function () {
                 sessionStorage.setItem("EventsView_selectedDate", this.selectedDate);
-                const request = this.$http.get("/services/events?date=" + this.selectedDate, {
-                    headers: {
-                        "Authorization": "Bearer " + app.Fwk.manager.SecurityManager.getToken()
-                    }
-                })
-                app.Fwk.util.HttpUtils.call(request).then((response) => {
+                const request = Vue.http.get("/services/events?date=" + this.selectedDate);
+                this.fwkCallService(request).then((response) => {
                     const events = response.body.data.events;
                     if (events.length == 0) {
-                        events.push({ title: app.Fwk.manager.I18nManager.getLabel("LABEL_NOTHING_TO_NOTICE") })
+                        events.push({ title: this.fwkGetLabel({ key: "LABEL_NOTHING_TO_NOTICE" }) })
                     }
                     this.events = events;
                 });
             }
         }
-    };
+    });
 }(window.app || (window.app = {})));

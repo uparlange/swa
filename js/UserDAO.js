@@ -15,11 +15,20 @@ db.info().then((result) => {
 });
 
 // exported methods
+exports.update = function (user) {
+    return new Promise((resolve, reject) => {
+        db.put(user).then((res) => {
+            resolve(res);
+        }).catch((err) => {
+            reject(err);
+        });
+    });
+};
 exports.findById = function (id) {
-    return new Promise(function (resolve, reject) {
-        db.get(id).then(function (doc) {
-            resolve(doc);
-        }).catch(function (err) {
+    return new Promise((resolve, reject) => {
+        db.get(id).then((res) => {
+            resolve(res);
+        }).catch((err) => {
             reject(err);
         });
     });

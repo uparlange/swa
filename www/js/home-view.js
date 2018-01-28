@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.HomeView = {
+    app.Fwk.manager.ComponentManager.register("HomeView", {
         data: function () {
             return {
                 groups: [
@@ -30,5 +30,5 @@
                 ]
             }
         }
-    };
+    });
 }(window.app || (window.app = {})));

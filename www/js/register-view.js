@@ -1,11 +1,11 @@
 "use strict";
 
 (function (app) {
-    app.Fwk.manager.ComponentManager.register("LoginView", {
+    app.Fwk.manager.ComponentManager.register("RegisterView", {
         data: function () {
             return {
-                showRegisterBtn: true,
-                title: this.fwkGetLabel({ key: "LABEL_AUTHENTIFICATION" }),
+                showRegisterBtn: false,
+                title: this.fwkGetLabel({ key: "LABEL_REGISTER" }),
                 valid: true,
                 login: "",
                 loginRules: [
@@ -20,23 +20,12 @@
                 errorMessage: ""
             }
         },
-        created: function () {
-            if (window.location.search.indexOf("debug") !== -1) {
-                this.login = "j.doe@lost.com";
-                this.password = "password";
-            }
-        },
-        mounted: function () {
-            if (window.location.search.indexOf("debug") !== -1) {
-                this.validate();
-            }
-        },
         methods: {
             validate: function () {
                 if (this.$refs.form.validate()) {
                     this.errorMessage = "";
-                    this.fwkLogin(this.login, this.password).then((response) => {
-
+                    this.fwkRegister(this.login, this.password).then((response) => {
+                        // Nothing
                     }, (response) => {
                         this.errorMessage = response.body.message;
                     })

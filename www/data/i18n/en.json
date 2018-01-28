@@ -1,5 +1,6 @@
 {
     "LABEL_SUBMIT": "Submit",
+    "LABEL_REGISTER": "Register",
     "LABEL_AUTHENTIFICATION": "Authentification",
     "LABEL_MY_SPACE": "My space",
     "LABEL_EVENTS": "Events",
@@ -13,5 +14,8 @@
     "LABEL_MIDDLEWARE": "Middleware",
     "LABEL_DATABASE": "Database",
     "LABEL_NOTHING_TO_NOTICE": "Nothing to notice ?!?",
-    "ERROR_INVALID_LOGIN_OR_PASSWORD": "Invalid login or password"
+    "ERROR_INVALID_LOGIN_OR_PASSWORD": "Invalid login or password",
+    "ERROR_FIELD_IS_REQUIRED": "Field is required",
+    "ERROR_FIELD_MUST_BE_VALID_EMAIL": "Field must be a valid email",
+    "ERROR_FIELD_HAS_MIN_LENGTH": "Field must be more than {length} characters"
 }

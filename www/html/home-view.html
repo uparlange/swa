@@ -8,8 +8,7 @@
         </v-card-text>
     </v-card>
     <div v-for="group in groups" :key="group.labelKey">
-        <div style="height:10px;"></div>
-        <v-card>
+        <v-card class="mt-3">
             <v-card-title>
                 <h3>{{$t(group.labelKey)}}</h3>
             </v-card-title>

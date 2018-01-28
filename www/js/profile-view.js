@@ -1,26 +1,22 @@
 "use strict";
 
 (function (app) {
-    app.ProfileView = {
+    app.Fwk.manager.ComponentManager.register("ProfileView", {
         data: function () {
             return {
 
             }
         },
         created: function () {
-            const request = this.$http.get("/services/profile", {
-                headers: {
-                    "Authorization": "Bearer " + app.Fwk.manager.SecurityManager.getToken()
-                }
-            })
-            app.Fwk.util.HttpUtils.call(request).then((response) => {
+            const request = Vue.http.get("/services/user");
+            this.fwkCallService(request).then((response) => {
                 this.profile = response.body.data.user;
             });
         },
         methods: {
-            logOut: function () {
-                app.Fwk.manager.SecurityManager.logOut();
+            logout: function () {
+                this.fwkLogout();
             }
         }
-    };
+    });
 }(window.app || (window.app = {})));

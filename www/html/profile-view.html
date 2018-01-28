@@ -7,14 +7,13 @@
 
         </v-card-text>
     </v-card>
-    <div style="height:10px;"></div>
-    <v-card>
+    <v-card class="mt-3">
         <v-card-title>
             <h3>{{$t('LABEL_ACTIONS')}}</h3>
         </v-card-title>
         <v-card-text>
             <div>
-                <a @click="logOut()">{{$t('LABEL_DISCONNECT')}}</router-link>
+                <a @click="logout()">{{$t('LABEL_DISCONNECT')}}</a>
             </div>
         </v-card-text>
     </v-card>

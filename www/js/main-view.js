@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.MainView = {
+    app.Fwk.manager.ComponentManager.register("MainView", {
         data: function () {
             return {
                 drawer: null,
@@ -14,17 +14,16 @@
             }
         },
         created: function () {
-            app.Fwk.manager.EventManager.on("FWK_LOGGED_IN", (user) => {
+            this.fwkGetEventBus().on("FWK_USER_SIGNED_IN", (user) => {
                 this._refreshProfileMenuLabel(user.firstName + " " + user.lastName);
             });
-            app.Fwk.manager.EventManager.on("FWK_LOGGED_OUT", () => {
+            this.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
                 this._refreshProfileMenuLabel();
-                app.Fwk.manager.RouterManager.navigate("/home");
             });
-            app.Fwk.manager.EventManager.on("FWK_RESOURCE_LOADING_START", () => {
+            this.fwkGetEventBus().on("FWK_RESOURCE_LOADING_START", () => {
                 this.loading = true;
             });
-            app.Fwk.manager.EventManager.on("FWK_RESOURCE_LOADING_STOP", () => {
+            this.fwkGetEventBus().on("FWK_RESOURCE_LOADING_STOP", () => {
                 this.loading = false;
             });
             this._refreshProfileMenuLabel();
@@ -34,5 +33,5 @@
                 this.menus[2].label = label || "Profile";
             }
         }
-    };
+    });
 }(window.app || (window.app = {})));

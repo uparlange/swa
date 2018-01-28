@@ -9,7 +9,23 @@ const EventDAO = require("./EventDAO");
 
 // exported methods
 exports.init = function (instance) {
-    // post
+    // common
+    instance.post("/services/register", (req, res) => {
+        CredentialDAO.add(req.body.login, req.body.password).then((credential) => {
+            if (credential) {
+                UserDAO.update({ _id: credential.id, firstName: req.body.login, lastName: "" }).then((user) => {
+                    res.json({
+                        message: "OK",
+                        data: {
+                            user: user
+                        }
+                    });
+                });
+            } else {
+                // TODO manage
+            }
+        })
+    });
     instance.post("/services/login", (req, res) => {
         CredentialDAO.findByLoginAndPassord(req.body.login, req.body.password).then((credential) => {
             if (credential) {
@@ -34,8 +50,8 @@ exports.init = function (instance) {
             }
         });
     });
-    // get
-    instance.get("/services/profile", Passport.AUTHENTICATED_SERVICE, function (req, res) {
+    // user
+    instance.get("/services/user", Passport.AUTHENTICATED_SERVICE, function (req, res) {
         res.json({
             message: "OK",
             data: {
@@ -43,6 +59,7 @@ exports.init = function (instance) {
             }
         });
     });
+    // events
     instance.get("/services/events", Passport.AUTHENTICATED_SERVICE, function (req, res) {
         EventDAO.findByUserAndDate(req.user._id, req.query.date).then((events) => {
             res.json({

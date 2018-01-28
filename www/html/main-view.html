@@ -1,13 +1,13 @@
 <v-app>
     <v-navigation-drawer app v-model="drawer">
         <v-list>
-            <v-list-tile v-for="menu in menus" :key="menu.icon">
+            <v-list-tile v-for="menu in menus" :key="menu.icon" @click="" :to="menu.link">
                 <v-list-tile-action>
                     <v-icon>{{menu.icon}}</v-icon>
                 </v-list-tile-action>
                 <v-list-tile-content>
                     <v-list-tile-title>
-                        <router-link :to="menu.link">{{menu.label || $t(menu.labelKey)}}</router-link>
+                        {{menu.label || $t(menu.labelKey)}}
                     </v-list-tile-title>
                 </v-list-tile-content>
             </v-list-tile>

@@ -1,0 +1,25 @@
+<div>
+    <v-form v-model="valid" ref="form">
+        <v-card style="width:300px;margin:auto;">
+            <v-card-title>
+                <h3>{{title}}</h3>
+            </v-card-title>
+            <v-card-text>
+                <v-text-field @keyup.enter="validate()" :label="$t('LABEL_LOGIN')" v-model="login" :rules="loginRules" required autofocus></v-text-field>
+                <v-text-field @keyup.enter="validate()" :label="$t('LABEL_PASSWORD')" v-model="password" :rules="passwordRules" required
+                    type="password"></v-text-field>
+                <div v-if="errorMessage.length > 0" style="color:red;">
+                    {{$t('ERROR_'+errorMessage)}}
+                </div>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn color="primary" :disabled="!valid" @click="validate()">
+                    {{$t('LABEL_SUBMIT')}}
+                </v-btn>
+                <v-btn v-if="showRegisterBtn" to="/register" color="primary">
+                    {{$t('LABEL_REGISTER')}}
+                </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-form>
+</div>
