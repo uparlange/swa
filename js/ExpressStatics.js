@@ -5,9 +5,9 @@ const express = require("express");
 exports.init = function (instance) {
     const www = (process.env.NODE_ENV === "production") ? "www/prod" : "www/dev";
     instance.use(express.static(www));
-    instance.use("/node_modules/vuetify/dist", express.static("node_modules/vuetify/dist"));
-    instance.use("/node_modules/vue/dist", express.static("node_modules/vue/dist"));
-    instance.use("/node_modules/vue-router/dist", express.static("node_modules/vue-router/dist"));
-    instance.use("/node_modules/vue-resource/dist", express.static("node_modules/vue-resource/dist"));
-    instance.use("/node_modules/vue-i18n/dist", express.static("node_modules/vue-i18n/dist"));
+    instance.use("/vendors", express.static("node_modules/vuetify/dist"));
+    instance.use("/vendors", express.static("node_modules/vue/dist"));
+    instance.use("/vendors", express.static("node_modules/vue-router/dist"));
+    instance.use("/vendors", express.static("node_modules/vue-resource/dist"));
+    instance.use("/vendors", express.static("node_modules/vue-i18n/dist"));
 }

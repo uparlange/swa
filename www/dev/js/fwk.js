@@ -1,6 +1,9 @@
 "use strict";
 
 (function (app) {
+    const Vue = window.Vue;
+    const VueRouter = window.VueRouter;
+    const VueI18n = window.VueI18n;
     const Fwk = {
         manager: {
             RouterManager: {

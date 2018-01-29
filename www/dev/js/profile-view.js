@@ -8,7 +8,7 @@
             }
         },
         created: function () {
-            const request = Vue.http.get("/services/user");
+            const request = this.$http.get("/services/user");
             app.fwkCallService(request).then((response) => {
                 this.profile = response.body.data.user;
             });

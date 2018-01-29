@@ -30,7 +30,7 @@
             },
             _refresh: function () {
                 sessionStorage.setItem("EventsView_selectedDate", this.selectedDate);
-                const request = Vue.http.get("/services/events?date=" + this.selectedDate);
+                const request = this.$http.get("/services/events?date=" + this.selectedDate);
                 app.fwkCallService(request).then((response) => {
                     const events = response.body.data.events;
                     if (events.length == 0) {
