@@ -10,7 +10,7 @@
                 login: "",
                 loginRules: [
                     (v) => !!v || app.fwkGetLabel({ key: "ERROR_FIELD_IS_REQUIRED" }),
-                    (v) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v) || app.fwkGetLabel({ key: "ERROR_FIELD_MUST_BE_VALID_EMAIL" })
+                    (v) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(v) || app.fwkGetLabel({ key: "ERROR_FIELD_MUST_BE_VALID_EMAIL" })
                 ],
                 password: "",
                 passwordRules: [
@@ -27,7 +27,7 @@
             validate: function () {
                 if (this.$refs.form.validate()) {
                     this.errorMessage = "";
-                    app.fwkUserRegister(this.login, this.password).then((response) => {
+                    app.fwkUserRegister(this.login, this.password).then(() => {
                         // Nothing
                     }, (response) => {
                         this._showMessage(response.body.message);

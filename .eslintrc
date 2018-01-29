@@ -1,0 +1,17 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "env": {
+        "browser": true
+    },
+    "globals": {
+        "Promise": true,
+        "Vue": true,
+        "VueRouter": true,
+        "VueI18n": true
+    }
+}

@@ -3,7 +3,8 @@ const express = require("express");
 
 // exported methods
 exports.init = function (instance) {
-    instance.use(express.static("www"));
+    const www = (process.env.NODE_ENV === "production") ? "www/prod" : "www/dev";
+    instance.use(express.static(www));
     instance.use("/node_modules/vuetify/dist", express.static("node_modules/vuetify/dist"));
     instance.use("/node_modules/vue/dist", express.static("node_modules/vue/dist"));
     instance.use("/node_modules/vue-router/dist", express.static("node_modules/vue-router/dist"));

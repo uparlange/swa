@@ -3,7 +3,7 @@
 (function (app) {
     // components
     app.fwkUseComponent({ id: "TestComponent" });
-    app.fwkDefineComponent({ id: "TestPage2View" }, {
+    app.fwkDefineComponent({ id: "TestPage1View" }, {
         data: function () {
             return {
                 label: "TestComponent"
@@ -13,8 +13,8 @@
     // directives
     app.fwkDefineDirective({ id: "TestDirective" }, {
         bind: function (el) {
-            el._onClickHandler = (event) => {
-                alert("TestDirective - Page 2");
+            el._onClickHandler = () => {
+                alert("TestDirective - Page 1");
             };
             el.addEventListener("click", el._onClickHandler, false);
         },

@@ -1,5 +1,5 @@
 "use strict";
 
-(function (app) {
+(function () {
     
 }(window.app || (window.app = {})));
