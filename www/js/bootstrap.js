@@ -1,11 +1,6 @@
 "use strict";
 
 (function (app) {
-    // define common components
-
-    // define common directives
-
-    // bootstrap main component
     const routes = [
         {
             path: "/",
@@ -14,16 +9,6 @@
         {
             path: "/home",
             component: app.fwkUseRouteComponent({ id: "HomeView" }),
-            default: true
-        },
-        {
-            path: "/test1",
-            component: app.fwkUseRouteComponent({ id: "Test1View", templateUrl: "html/test-view.html" }),
-            default: true
-        },
-        {
-            path: "/test2",
-            component: app.fwkUseRouteComponent({ id: "Test2View", templateUrl: "html/test-view.html" }),
             default: true
         },
         {
@@ -42,6 +27,10 @@
             secure: true,
             children: [
                 {
+                    path: "/",
+                    redirect: "events"
+                },
+                {
                     path: "events",
                     component: app.fwkUseRouteComponent({ id: "EventsView" }),
                     secure: true
@@ -50,6 +39,24 @@
                     path: "profile",
                     component: app.fwkUseRouteComponent({ id: "ProfileView" }),
                     secure: true
+                }
+            ]
+        },
+        {
+            path: "/test",
+            component: app.fwkUseRouteComponent({ id: "TestView" }),
+            children: [
+                {
+                    path: "/",
+                    redirect: "page1"
+                },
+                {
+                    path: "page1",
+                    component: app.fwkUseRouteComponent({ id: "TestPage1View", templateUrl: "html/test-page-view.html" }),
+                },
+                {
+                    path: "page2",
+                    component: app.fwkUseRouteComponent({ id: "TestPage2View", templateUrl: "html/test-page-view.html" }),
                 }
             ]
         }

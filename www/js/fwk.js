@@ -206,6 +206,7 @@
                     };
                 },
                 emit: function (eventName, data) {
+                    console.debug("Fwk: EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
                     this._vue.$emit(eventName, data);
                 },
                 on: function (eventName, callback) {
@@ -219,28 +220,43 @@
                 _templateCache: {},
                 _componentCache: {},
                 _directiveCache: {},
+                _filterCache: {},
                 init: function () {
                     // components
                     app.fwkDefineComponent = (params, description) => {
+                        console.debug("Fwk: Define component '" + params.id + "'");
                         this._defineComponent(params.id, description);
                     };
                     app.fwkUseComponent = (params) => {
+                        console.debug("Fwk: Use component '" + params.id + "'");
                         Vue.component(Fwk.util.StringUtils.dasherize(params.id), this._useComponent(params));
+                    };
+                    // filters
+                    app.fwkDefineFilter = (name, callback) => {
+                        console.debug("Fwk: Define filter '" + name + "'");
+                        if (this._filterCache[name]) {
+                            console.warn("Fwk: Filter '" + name + "' already registered... definition's crushed !");
+                        }
+                        Vue.filter(name, callback);
+                        this._filterCache[name] = true;
                     };
                     // directives
                     app.fwkDefineDirective = (params, description) => {
+                        console.debug("Fwk: Define directive '" + params.id + "'");
                         if (this._directiveCache[params.id]) {
-                            console.warn("FWK : Directive '" + params.id + "' already registered... definition crushed !");
+                            console.warn("Fwk: Directive '" + params.id + "' already registered... definition's crushed !");
                         }
                         Vue.directive(Fwk.util.StringUtils.dasherize(params.id), description);
                         this._directiveCache[params.id] = true;
                     };
                     // route components
                     app.fwkUseRouteComponent = (params) => {
+                        console.debug("Fwk: Use route component '" + params.id + "'");
                         return this._useComponent(params);
                     };
                     // application
                     app.fwkBootstrapComponent = (params) => {
+                        console.debug("Fwk: Bootstrap component '" + params.id + "'");
                         this._bootstrapComponent(params);
                     };
                 },
@@ -252,6 +268,7 @@
                         } else {
                             const componentUrl = this._getComponentUrl(params);
                             app.fwkLoadJs(componentUrl).then(() => {
+                                console.debug("Fwk: Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
                             });
@@ -267,6 +284,7 @@
                         } else {
                             const request = Vue.http.get(templateUrl);
                             app.fwkCallService(request).then((response) => {
+                                console.debug("Fwk: Template file '" + templateUrl + "' loaded");
                                 templateDescription = this._setTemplateDescription(templateUrl, response.bodyText);
                                 resolve(templateDescription);
                             });
@@ -277,14 +295,18 @@
                     return (resolve, reject) => {
                         // load js
                         this._loadComponent(params).then((componentDescription) => {
-                            if (componentDescription.template) {
-                                resolve(componentDescription);
+                            if (!componentDescription) {
+                                reject(params.id);
                             } else {
-                                // load html
-                                this._loadTemplate(params).then((templateDescription) => {
-                                    componentDescription.template = templateDescription;
+                                if (componentDescription.template) {
                                     resolve(componentDescription);
-                                });
+                                } else {
+                                    // load html
+                                    this._loadTemplate(params).then((templateDescription) => {
+                                        componentDescription.template = templateDescription;
+                                        resolve(componentDescription);
+                                    });
+                                }
                             }
                         });
                     };

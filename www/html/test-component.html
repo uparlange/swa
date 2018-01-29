@@ -1,1 +1,1 @@
-<div @mouseover="fontWeight='bold'" @mouseout="fontWeight='normal'" :style="{ fontWeight: fontWeight, cursor:'pointer' }">{{label}} - Item {{index}}</div>
+<div @mouseover="fontWeight='bold'" @mouseout="fontWeight='normal'" :style="{ fontWeight: fontWeight, cursor:'pointer' }">{{index | zerofill(3)}}. {{label}} --> {{label | dasherize}}.js</div>

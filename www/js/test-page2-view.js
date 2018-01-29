@@ -1,9 +1,16 @@
 "use strict";
 
 (function (app) {
-    // uses
+    // components
     app.fwkUseComponent({ id: "TestComponent" });
-    // defines
+    app.fwkDefineComponent({ id: "TestPage2View" }, {
+        data: function () {
+            return {
+                label: "TestComponent"
+            }
+        }
+    });
+    // directives
     app.fwkDefineDirective({ id: "TestDirective" }, {
         bind: function (el) {
             el._onClickHandler = (event) => {
@@ -15,11 +22,9 @@
             el.removeEventListener("click", el._onClickHandler);
         }
     });
-    app.fwkDefineComponent({ id: "Test2View" }, {
-        data: function () {
-            return {
-                label: "TestComponent - Page 2"
-            }
-        }
+    // filters
+    app.fwkDefineFilter("dasherize", function (value) {
+        if (!value) return "";
+        return value.trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase().substring(1);
     });
 }(window.app || (window.app = {})));
