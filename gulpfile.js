@@ -11,7 +11,7 @@ const htmlclean = require('gulp-htmlclean');
 const eslint = require('gulp-eslint');
 const uglify = require('gulp-uglify-es').default;
 const imagemin = require('gulp-imagemin');
-const gulpCopy = require('gulp-copy');
+const jsdoc = require('gulp-jsdoc3');
 
 gulp.task('prepare', () => {
     return del(['./www/prod']);
@@ -48,6 +48,11 @@ gulp.task('copy-statics', () => {
     return gulp.src('./www/dev/data/**/*.*').pipe(gulp.dest('./www/prod/data'));
 });
 
+gulp.task('generate-doc', function () {
+    const config = require('./jsdoc.json');
+    return gulp.src(['./README.md', './www/dev/js/fwk.js'], { read: false }).pipe(jsdoc(config));
+});
+
 gulp.task('default', (callback) => {
-    runSequence('prepare', 'copy-statics', 'optimize-css', 'optimize-html', 'optimize-js', 'optimize-images', callback);
+    runSequence('prepare', 'copy-statics', 'optimize-css', 'optimize-html', 'optimize-js', 'optimize-images', 'generate-doc', callback);
 });

@@ -1,6 +1,9 @@
 "use strict";
 
 (function (app) {
+    /**
+     * @namespace app
+     */
     const Vue = window.Vue;
     const VueRouter = window.VueRouter;
     const VueI18n = window.VueI18n;
@@ -17,6 +20,12 @@
                 _scrollPositions: {},
                 _requestedRouteBeforeLogin: null,
                 init: function () {
+                    /**
+                     * @name fwkGetCurrentRoute
+                     * @function
+                     * @memberof app
+                     * @returns {String}
+                     */
                     app.fwkGetCurrentRoute = () => {
                         return this._getCurrentRoute();
                     };
@@ -98,9 +107,25 @@
                 _locale: null,
                 _i18n: new VueI18n(),
                 init: function () {
+                    /**
+                     * @name fwkGetLabel
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.key
+                     * @param {String} [params.locale]
+                     * @param {Object} [params.values]
+                     * @returns {String}
+                     */
                     app.fwkGetLabel = (params) => {
                         return this._getLabel(params);
                     };
+                    /**
+                     * @name fwkGetCurrentLocale
+                     * @function
+                     * @memberof app
+                     * @returns {String}
+                     */
                     app.fwkGetCurrentLocale = () => {
                         return this._getLocale();
                     };
@@ -145,12 +170,32 @@
             },
             SecurityManager: {
                 init: function () {
+                    /**
+                     * @name fwkUserLogin
+                     * @function
+                     * @memberof app
+                     * @param {String} login
+                     * @param {String} password
+                     */
                     app.fwkUserLogin = (login, password) => {
                         return this._login(login, password);
                     };
+                    /**
+                     * @name fwkUserRegister
+                     * @function
+                     * @memberof app
+                     * @param {String} login
+                     * @param {String} password
+                     */
                     app.fwkUserRegister = (login, password) => {
                         return this._register(login, password);
                     };
+                    /**
+                     * @name fwkUserLogout
+                     * @function
+                     * @memberof app
+                     * @function
+                     */
                     app.fwkUserLogout = () => {
                         return this._logout();
                     };
@@ -204,6 +249,12 @@
             EventBus: {
                 _vue: new Vue(),
                 init: function () {
+                    /**
+                     * @name fwkGetEventBus
+                     * @function
+                     * @memberof app
+                     * @returns {Object}
+                     */
                     app.fwkGetEventBus = () => {
                         return this;
                     };
@@ -226,15 +277,39 @@
                 _filterCache: {},
                 init: function () {
                     // components
+                    /**
+                     * @name fwkDefineComponent
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {Object} description
+                     */
                     app.fwkDefineComponent = (params, description) => {
                         Fwk.util.LogUtils.debug("Fwk: Define component '" + params.id + "'");
                         this._defineComponent(params.id, description);
                     };
+                    /**
+                     * @name fwkUseComponent
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {String} [params.componentUrl]
+                     * @param {String} [params.templateUrl]
+                     */
                     app.fwkUseComponent = (params) => {
                         Fwk.util.LogUtils.debug("Fwk: Use component '" + params.id + "'");
                         Vue.component(Fwk.util.StringUtils.dasherize(params.id), this._useComponent(params));
                     };
                     // filters
+                    /**
+                     * @name fwkDefineFilter
+                     * @function
+                     * @memberof app
+                     * @param {String} name
+                     * @param {function} callback
+                     */
                     app.fwkDefineFilter = (name, callback) => {
                         Fwk.util.LogUtils.debug("Fwk: Define filter '" + name + "'");
                         if (this._filterCache[name]) {
@@ -244,6 +319,14 @@
                         this._filterCache[name] = true;
                     };
                     // directives
+                    /**
+                     * @name fwkDefineDirective
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {Object} description
+                     */
                     app.fwkDefineDirective = (params, description) => {
                         Fwk.util.LogUtils.debug("Fwk: Define directive '" + params.id + "'");
                         if (this._directiveCache[params.id]) {
@@ -253,11 +336,29 @@
                         this._directiveCache[params.id] = true;
                     };
                     // route components
+                    /**
+                     * @name fwkUseRouteComponent
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {String} [params.componentUrl]
+                     * @param {String} [params.templateUrl]
+                     */
                     app.fwkUseRouteComponent = (params) => {
                         Fwk.util.LogUtils.debug("Fwk: Use route component '" + params.id + "'");
                         return this._useComponent(params);
                     };
                     // application
+                    /**
+                     * @name fwkBootstrapComponent
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {List} [params.routes]
+                     * @param {String} [params.locale]
+                     */
                     app.fwkBootstrapComponent = (params) => {
                         Fwk.util.LogUtils.debug("Fwk: Bootstrap component '" + params.id + "'");
                         this._bootstrapComponent(params);
@@ -350,9 +451,23 @@
             },
             ResourceManager: {
                 init: function () {
+                    /**
+                     * @name fwkCallService
+                     * @function
+                     * @memberof app
+                     * @param {Object} request
+                     * @returns {Promise}
+                     */
                     app.fwkCallService = (request) => {
                         return this._callService(request);
                     };
+                    /**
+                     * @name fwkLoadJs
+                     * @function
+                     * @memberof app
+                     * @param {string} url
+                     * @returns {Promise}
+                     */
                     app.fwkLoadJs = (url) => {
                         return this._loadJs(url);
                     };
