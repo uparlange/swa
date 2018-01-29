@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.fwkRegisterRouteComponent("ProfileView", {
+    app.fwkDefineComponent({ id: "ProfileView" }, {
         data: function () {
             return {
 
@@ -15,7 +15,7 @@
         },
         methods: {
             logout: function () {
-                app.fwkLogout();
+                app.fwkUserLogout();
             }
         }
     });

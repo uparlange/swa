@@ -12,42 +12,40 @@ exports.init = function (instance) {
     // common
     instance.post("/services/register", (req, res) => {
         CredentialDAO.add(req.body.login, req.body.password).then((credential) => {
-            if (credential) {
-                UserDAO.update({ _id: credential.id, firstName: req.body.login, lastName: "" }).then((user) => {
-                    res.json({
-                        message: "OK",
-                        data: {
-                            user: user
-                        }
-                    });
+            UserDAO.update({ _id: credential.id, firstName: req.body.login, lastName: "" }).then((user) => {
+                res.json({
+                    message: "OK",
+                    data: {
+                        user: user
+                    }
                 });
-            } else {
-                // TODO manage
-            }
+            }, (err) => {
+                res.status(400).json(err);
+            });
+        }, (err) => {
+            res.status(400).json(err);
         })
     });
     instance.post("/services/login", (req, res) => {
         CredentialDAO.findByLoginAndPassord(req.body.login, req.body.password).then((credential) => {
-            if (credential) {
-                const payload = {
-                    id: credential._id,
-                    exp: Math.floor(Date.now() / 1000) + (60 * 60) //1 hour
-                };
-                const token = jwt.sign(payload, Passport.SECRET_OR_KEY);
-                UserDAO.findById(payload.id).then((user) => {
-                    res.json({
-                        message: "OK",
-                        data: {
-                            token: token,
-                            user: user
-                        }
-                    });
+            const payload = {
+                id: credential._id,
+                exp: Math.floor(Date.now() / 1000) + (60 * 60) //1 hour
+            };
+            const token = jwt.sign(payload, Passport.SECRET_OR_KEY);
+            UserDAO.findById(payload.id).then((user) => {
+                res.json({
+                    message: "OK",
+                    data: {
+                        token: token,
+                        user: user
+                    }
                 });
-            } else {
-                res.status(401).json({
-                    message: "INVALID_LOGIN_OR_PASSWORD"
-                });
-            }
+            }, (err) => {
+                res.status(401).json(err);
+            });
+        }, (err) => {
+            res.status(401).json(err);
         });
     });
     // user
@@ -68,6 +66,8 @@ exports.init = function (instance) {
                     events: events
                 }
             });
+        }, (err) => {
+            res.status(400).json(err);
         });
     });
 }

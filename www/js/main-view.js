@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.fwkRegisterRouteComponent("MainView", {
+    app.fwkDefineComponent({ id: "MainView" }, {
         data: function () {
             return {
                 drawer: null,

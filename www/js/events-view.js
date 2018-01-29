@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.fwkRegisterRouteComponent("EventsView", {
+    app.fwkDefineComponent({ id: "EventsView" }, {
         data: function () {
             return {
                 locale: app.fwkGetCurrentLocale(),

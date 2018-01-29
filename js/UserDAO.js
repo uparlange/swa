@@ -20,7 +20,7 @@ exports.update = function (user) {
         db.put(user).then((res) => {
             resolve(res);
         }).catch((err) => {
-            reject(err);
+            reject({ message: "TECHNICAL_ERROR" });
         });
     });
 };
@@ -29,7 +29,7 @@ exports.findById = function (id) {
         db.get(id).then((res) => {
             resolve(res);
         }).catch((err) => {
-            reject(err);
+            reject({ message: "TECHNICAL_ERROR" });
         });
     });
 };

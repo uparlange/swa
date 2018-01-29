@@ -8,9 +8,6 @@
                 <v-text-field @keyup.enter="validate()" :label="$t('LABEL_LOGIN')" v-model="login" :rules="loginRules" required autofocus></v-text-field>
                 <v-text-field @keyup.enter="validate()" :label="$t('LABEL_PASSWORD')" v-model="password" :rules="passwordRules" required
                     type="password"></v-text-field>
-                <div v-if="errorMessage.length > 0" style="color:red;">
-                    {{$t('ERROR_'+errorMessage)}}
-                </div>
             </v-card-text>
             <v-card-actions>
                 <v-btn color="primary" :disabled="!valid" @click="validate()">
@@ -22,4 +19,7 @@
             </v-card-actions>
         </v-card>
     </v-form>
+    <v-alert class="mt-3" v-if="message.visible" transition="scale-transition" color="error" icon="warning" :value="true">
+        {{$t('ERROR_' + message.value)}}
+    </v-alert>
 </div>

@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.Fwk = {
+    const Fwk = {
         manager: {
             RouterManager: {
                 _router: null,
@@ -11,6 +11,7 @@
                     secureDefault: null,
                     secures: {}
                 },
+                _scrollPositions: {},
                 _requestedRouteBeforeLogin: null,
                 init: function () {
                     app.fwkGetCurrentRoute = () => {
@@ -20,10 +21,17 @@
                 initForApplication: function (routes) {
                     this._analyzeRoutes(routes);
                     this._router = new VueRouter({
-                        routes: routes
+                        routes: routes,
+                        scrollBehavior: (to, from, savedPosition) => {
+                            // restore scroll position
+                            return { x: 0, y: (this._scrollPositions[to.fullPath] || 0) };
+                        }
                     });
                     this._router.beforeEach((to, from, next) => {
-                        if (this._routes.secures[to.fullPath] && !app.Fwk.manager.SecurityManager.isConnected()) {
+                        // save scroll position
+                        this._scrollPositions[from.fullPath] = window.pageYOffset;
+                        // check if route secured
+                        if (this._routes.secures[to.fullPath] && !Fwk.manager.SecurityManager.isConnected()) {
                             this._requestedRouteBeforeLogin = to.fullPath;
                             next(this._routes.login);
                         } else {
@@ -31,6 +39,7 @@
                         }
                     });
                     this._router.afterEach((to, from) => {
+                        // dispatch event
                         app.fwkGetEventBus().emit("FWK_ROUTE_CHANGED", {
                             from: from.fullPath,
                             to: to.fullPath
@@ -133,13 +142,13 @@
             },
             SecurityManager: {
                 init: function () {
-                    app.fwkLogin = (login, password) => {
+                    app.fwkUserLogin = (login, password) => {
                         return this._login(login, password);
                     };
-                    app.fwkRegister = (login, password) => {
+                    app.fwkUserRegister = (login, password) => {
                         return this._register(login, password);
                     };
-                    app.fwkLogout = () => {
+                    app.fwkUserLogout = () => {
                         return this._logout();
                     };
                 },
@@ -209,53 +218,88 @@
             ComponentManager: {
                 _templateCache: {},
                 _componentCache: {},
+                _directiveCache: {},
                 init: function () {
+                    // components
+                    app.fwkDefineComponent = (params, description) => {
+                        this._defineComponent(params.id, description);
+                    };
+                    app.fwkUseComponent = (params) => {
+                        Vue.component(Fwk.util.StringUtils.dasherize(params.id), this._useComponent(params));
+                    };
+                    // directives
+                    app.fwkDefineDirective = (params, description) => {
+                        if (this._directiveCache[params.id]) {
+                            console.warn("FWK : Directive '" + params.id + "' already registered... definition crushed !");
+                        }
+                        Vue.directive(Fwk.util.StringUtils.dasherize(params.id), description);
+                        this._directiveCache[params.id] = true;
+                    };
+                    // route components
+                    app.fwkUseRouteComponent = (params) => {
+                        return this._useComponent(params);
+                    };
+                    // application
                     app.fwkBootstrapComponent = (params) => {
-                        this._fwkBootstrapComponent(params);
-                    };
-                    app.fwkRegisterRouteComponent = (id, description) => {
-                        this._fwkRegisterRouteComponent(id, description);
-                    };
-                    app.fwkDefineRouteComponent = (params) => {
-                        return this._fwkDefineRouteComponent(params);
+                        this._bootstrapComponent(params);
                     };
                 },
-                _fwkDefineRouteComponent: function (params) {
-                    return () => {
-                        return new Promise((resolve, reject) => {
-                            // load js
-                            app.fwkLoadJs(this._getComponentUrl(params)).then(() => {
-                                const componentDescription = this._getComponentDescription(params.id);
-                                // load html (with cache managment for component sharing same template)
-                                const templateUrl = this._getTemplateUrl(params);
-                                const templateDescription = this._getTemplateDescription(templateUrl);
-                                if (templateDescription) {
+                _loadComponent: function (params) {
+                    return new Promise((resolve, reject) => {
+                        let componentDescription = this._getComponentDescription(params.id);
+                        if (componentDescription) {
+                            resolve(componentDescription);
+                        } else {
+                            const componentUrl = this._getComponentUrl(params);
+                            app.fwkLoadJs(componentUrl).then(() => {
+                                componentDescription = this._getComponentDescription(params.id);
+                                resolve(componentDescription);
+                            });
+                        }
+                    });
+                },
+                _loadTemplate: function (params) {
+                    return new Promise((resolve, reject) => {
+                        const templateUrl = this._getTemplateUrl(params);
+                        let templateDescription = this._getTemplateDescription(templateUrl);
+                        if (templateDescription) {
+                            resolve(templateDescription);
+                        } else {
+                            const request = Vue.http.get(templateUrl);
+                            app.fwkCallService(request).then((response) => {
+                                templateDescription = this._setTemplateDescription(templateUrl, response.bodyText);
+                                resolve(templateDescription);
+                            });
+                        }
+                    });
+                },
+                _useComponent: function (params) {
+                    return (resolve, reject) => {
+                        // load js
+                        this._loadComponent(params).then((componentDescription) => {
+                            if (componentDescription.template) {
+                                resolve(componentDescription);
+                            } else {
+                                // load html
+                                this._loadTemplate(params).then((templateDescription) => {
                                     componentDescription.template = templateDescription;
                                     resolve(componentDescription);
-                                } else {
-                                    const request = Vue.http.get(templateUrl);
-                                    app.fwkCallService(request).then((response) => {
-                                        componentDescription.template = this._setTemplateDescription(templateUrl, response.bodyText);
-                                        resolve(componentDescription);
-                                    });
-                                }
-                            })
+                                });
+                            }
                         });
-                    }
+                    };
                 },
-                _fwkRegisterRouteComponent: function (id, description) {
+                _defineComponent: function (id, description) {
                     this._componentCache[id] = description;
                 },
-                _fwkBootstrapComponent: function (params) {
+                _bootstrapComponent: function (params) {
                     // load js
-                    app.fwkLoadJs(this._getComponentUrl(params)).then(() => {
-                        const componentDescription = this._getComponentDescription(params.id);
-                        componentDescription.i18n = app.Fwk.manager.I18nManager.initForApplication(params.locale || "en");
-                        componentDescription.router = app.Fwk.manager.RouterManager.initForApplication(params.routes || []);
+                    this._loadComponent(params).then((componentDescription) => {
+                        componentDescription.i18n = Fwk.manager.I18nManager.initForApplication(params.locale || "en");
+                        componentDescription.router = Fwk.manager.RouterManager.initForApplication(params.routes || []);
                         // load html
-                        const request = Vue.http.get(this._getTemplateUrl(params));
-                        app.fwkCallService(request).then((response) => {
-                            document.getElementById(params.id).innerHTML = response.bodyText;
+                        this._loadTemplate(params).then((templateDescription) => {
+                            document.getElementById(params.id).innerHTML = templateDescription;
                             // bootstrap
                             const vue = new Vue(componentDescription);
                             vue.$mount("#" + params.id);
@@ -273,10 +317,10 @@
                     return this._templateCache[url];
                 },
                 _getComponentUrl: function (params) {
-                    return params.componentUrl || ("js/" + app.Fwk.util.StringUtils.dasherize(params.id) + ".js");
+                    return params.componentUrl || ("js/" + Fwk.util.StringUtils.dasherize(params.id) + ".js");
                 },
                 _getTemplateUrl: function (params) {
-                    return params.templateUrl || ("html/" + app.Fwk.util.StringUtils.dasherize(params.id) + ".html");
+                    return params.templateUrl || ("html/" + Fwk.util.StringUtils.dasherize(params.id) + ".html");
                 }
             },
             ResourceManager: {
@@ -309,8 +353,8 @@
                             resolve(response);
                         }, (response) => {
                             app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
-                            if (app.Fwk.manager.SecurityManager.isConnected() && response.status === 401) {
-                                app.Fwk.manager.SecurityManager.sessionTimedOut();
+                            if (Fwk.manager.SecurityManager.isConnected() && response.status === 401) {
+                                Fwk.manager.SecurityManager.sessionTimedOut();
                             } else {
                                 reject(response);
                             }
@@ -327,7 +371,7 @@
             }
         }
     };
-    for (var manager in app.Fwk.manager) {
-        app.Fwk.manager[manager].init();
+    for (var manager in Fwk.manager) {
+        Fwk.manager[manager].init();
     }
 }(window.app || (window.app = {})));

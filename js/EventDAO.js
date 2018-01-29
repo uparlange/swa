@@ -42,7 +42,7 @@ exports.findByUserAndDate = function (userId, dateISOString) {
         }).then(function (result) {
             resolve(result.docs);
         }).catch(function (err) {
-            reject(err);
+            reject({ message: "TECHNICAL_ERROR" });
         });
     });
 };

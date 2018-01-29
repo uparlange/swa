@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.fwkRegisterRouteComponent("MySpaceView", {
+    app.fwkDefineComponent({ id: "MySpaceView" }, {
         data: function () {
             return {
                 items: []

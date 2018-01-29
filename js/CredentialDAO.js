@@ -21,13 +21,23 @@ db.info().then((result) => {
 // exported methods
 exports.add = function (login, password) {
     return new Promise((resolve, reject) => {
-        // TODO check if login already exists
-        bcrypt.hash(password, salt, (err, hash) => {
-            db.post({ login: login, password: hash }).then((res) => {
-                resolve(res);
-            }).catch((err) => {
-                reject(err);
-            });
+        db.find({
+            selector: { login: (login || "") }
+        }).then((res) => {
+            const credential = res.docs[0];
+            if (credential) {
+                reject({ message: "LOGIN_ALREADY_EXISTS" });
+            } else {
+                bcrypt.hash(password, salt, (err, hash) => {
+                    db.post({ login: login, password: hash }).then((res) => {
+                        resolve(res);
+                    }).catch((err) => {
+                        reject({ message: "TECHNICAL_ERROR" });
+                    });
+                });
+            }
+        }).catch((err) => {
+            reject({ message: "TECHNICAL_ERROR" });
         });
     });
 };
@@ -39,13 +49,17 @@ exports.findByLoginAndPassord = function (login, password) {
             const credential = res.docs[0];
             if (credential) {
                 bcrypt.compare(password, credential.password, (err, res) => {
-                    resolve(res ? credential : undefined);
+                    if (res) {
+                        resolve(credential);
+                    } else {
+                        reject({ message: "INVALID_LOGIN_OR_PASSWORD" });
+                    }
                 });
             } else {
-                resolve(undefined);
+                reject({ message: "INVALID_LOGIN_OR_PASSWORD" });
             }
         }).catch((err) => {
-            reject(err);
+            reject({ message: "TECHNICAL_ERROR" });
         });
     });
 };

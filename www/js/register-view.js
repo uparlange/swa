@@ -1,7 +1,7 @@
 "use strict";
 
 (function (app) {
-    app.fwkRegisterRouteComponent("RegisterView", {
+    app.fwkDefineComponent({ id: "RegisterView" }, {
         data: function () {
             return {
                 showRegisterBtn: false,
@@ -17,19 +17,29 @@
                     (v) => !!v || app.fwkGetLabel({ key: "ERROR_FIELD_IS_REQUIRED" }),
                     (v) => v && v.length >= 8 || app.fwkGetLabel({ key: "ERROR_FIELD_HAS_MIN_LENGTH", values: { length: 8 } })
                 ],
-                errorMessage: ""
+                message: {
+                    visible: false,
+                    value: ""
+                }
             }
         },
         methods: {
             validate: function () {
                 if (this.$refs.form.validate()) {
                     this.errorMessage = "";
-                    app.fwkRegister(this.login, this.password).then((response) => {
+                    app.fwkUserRegister(this.login, this.password).then((response) => {
                         // Nothing
                     }, (response) => {
-                        this.errorMessage = response.body.message;
+                        this._showMessage(response.body.message);
                     })
                 }
+            },
+            _showMessage: function (value) {
+                this.message.value = value;
+                this.message.visible = true;
+                setTimeout(() => {
+                    this.message.visible = false;
+                }, 3000);
             }
         }
     });

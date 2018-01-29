@@ -1,6 +1,11 @@
 "use strict";
 
 (function (app) {
+    // define common components
+
+    // define common directives
+
+    // bootstrap main component
     const routes = [
         {
             path: "/",
@@ -8,32 +13,42 @@
         },
         {
             path: "/home",
-            component: app.fwkDefineRouteComponent({ id: "HomeView" }),
+            component: app.fwkUseRouteComponent({ id: "HomeView" }),
+            default: true
+        },
+        {
+            path: "/test1",
+            component: app.fwkUseRouteComponent({ id: "Test1View", templateUrl: "html/test-view.html" }),
+            default: true
+        },
+        {
+            path: "/test2",
+            component: app.fwkUseRouteComponent({ id: "Test2View", templateUrl: "html/test-view.html" }),
             default: true
         },
         {
             path: "/login",
-            component: app.fwkDefineRouteComponent({ id: "LoginView", templateUrl: "html/sign-in-up-view.html" }),
+            component: app.fwkUseRouteComponent({ id: "LoginView", templateUrl: "html/sign-in-up-view.html" }),
             login: true
         },
         {
             path: "/register",
-            component: app.fwkDefineRouteComponent({ id: "RegisterView", templateUrl: "html/sign-in-up-view.html" })
+            component: app.fwkUseRouteComponent({ id: "RegisterView", templateUrl: "html/sign-in-up-view.html" })
         },
         {
             path: "/myspace",
-            component: app.fwkDefineRouteComponent({ id: "MySpaceView" }),
+            component: app.fwkUseRouteComponent({ id: "MySpaceView" }),
             default: true,
             secure: true,
             children: [
                 {
                     path: "events",
-                    component: app.fwkDefineRouteComponent({ id: "EventsView" }),
+                    component: app.fwkUseRouteComponent({ id: "EventsView" }),
                     secure: true
                 },
                 {
                     path: "profile",
-                    component: app.fwkDefineRouteComponent({ id: "ProfileView" }),
+                    component: app.fwkUseRouteComponent({ id: "ProfileView" }),
                     secure: true
                 }
             ]
