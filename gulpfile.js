@@ -77,7 +77,7 @@ gulp.task('generate-manifest', (callback) => {
     // application files
     readDir(baseDir);
     // vendor files
-    Config.getConfig().vendors.forEach((folder, index, array) => {
+    Config.getConfig().expressStaticsVendors.forEach((folder, index, array) => {
         folder.files.forEach((file, index, array) => {
             content += 'vendors/' + file + '\n';
         });

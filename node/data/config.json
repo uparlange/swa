@@ -1,5 +1,7 @@
 {
-    "vendors": [
+    "passportSecretOrKey": "mySuperSecretKey",
+    "expressPort": 8080,
+    "expressStaticsVendors": [
         {
             "folder": "node_modules/vuetify/dist",
             "files": [

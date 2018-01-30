@@ -8,7 +8,7 @@ const Config = require("./Config");
 exports.init = function (instance) {
     const www = (process.env.NODE_ENV === "production") ? "www/prod" : "www/dev";
     instance.use(express.static(www));
-    Config.getConfig().vendors.forEach((item, index, array) => {
+    Config.getConfig().expressStaticsVendors.forEach((item, index, array) => {
         instance.use("/vendors", express.static(item.folder));
     });
 }

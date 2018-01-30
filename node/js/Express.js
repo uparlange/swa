@@ -7,6 +7,7 @@ const compression = require("compression");
 const Passport = require("./Passport");
 const ExpressStatics = require("./ExpressStatics");
 const ExpressServices = require("./ExpressServices");
+const Config = require("./Config");
 
 // body
 let instance = null;
@@ -27,8 +28,8 @@ exports.start = function () {
         // init services
         ExpressServices.init(instance);
         // start server
-        instance.listen((process.env.PORT || 8080), () => {
-            
+        instance.listen((process.env.PORT || Config.getConfig().expressPort), () => {
+
         });
     }
 };
