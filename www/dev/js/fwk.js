@@ -7,6 +7,7 @@
     const Vue = window.Vue;
     const VueRouter = window.VueRouter;
     const VueI18n = window.VueI18n;
+    const LoggerClassName = "Fwk";
     const Fwk = {
         manager: {
             RouterManager: {
@@ -260,7 +261,7 @@
                     };
                 },
                 emit: function (eventName, data) {
-                    app.fwkGetLogger("Fwk").debug("EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
+                    app.fwkGetLogger(LoggerClassName).debug("EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
                     this._vue.$emit(eventName, data);
                 },
                 on: function (eventName, callback) {
@@ -286,7 +287,7 @@
                      * @param {Object} description
                      */
                     app.fwkDefineComponent = (params, description) => {
-                        app.fwkGetLogger("Fwk").debug("Define component '" + params.id + "'");
+                        app.fwkGetLogger(LoggerClassName).debug("Define component '" + params.id + "'");
                         this._defineComponent(params.id, description);
                     };
                     /**
@@ -299,7 +300,7 @@
                      * @param {String} [params.templateUrl]
                      */
                     app.fwkUseComponent = (params) => {
-                        app.fwkGetLogger("Fwk").debug("Use component '" + params.id + "'");
+                        app.fwkGetLogger(LoggerClassName).debug("Use component '" + params.id + "'");
                         Vue.component(Fwk.util.StringUtils.dasherize(params.id), this._useComponent(params));
                     };
                     // filters
@@ -311,9 +312,9 @@
                      * @param {function} callback
                      */
                     app.fwkDefineFilter = (name, callback) => {
-                        app.fwkGetLogger("Fwk").debug("Define filter '" + name + "'");
+                        app.fwkGetLogger(LoggerClassName).debug("Define filter '" + name + "'");
                         if (this._filterCache[name]) {
-                            app.getLogger("Fwk").warn("Filter '" + name + "' already registered... definition's crushed !");
+                            app.fwkGetLogger(LoggerClassName).warn("Filter '" + name + "' already registered... definition's crushed !");
                         }
                         Vue.filter(name, callback);
                         this._filterCache[name] = true;
@@ -328,9 +329,9 @@
                      * @param {Object} description
                      */
                     app.fwkDefineDirective = (params, description) => {
-                        app.fwkGetLogger("Fwk").debug("Define directive '" + params.id + "'");
+                        app.fwkGetLogger(LoggerClassName).debug("Define directive '" + params.id + "'");
                         if (this._directiveCache[params.id]) {
-                            app.getLogger("Fwk").warn("Directive '" + params.id + "' already registered... definition's crushed !");
+                            app.fwkGetLogger(LoggerClassName).warn("Directive '" + params.id + "' already registered... definition's crushed !");
                         }
                         Vue.directive(Fwk.util.StringUtils.dasherize(params.id), description);
                         this._directiveCache[params.id] = true;
@@ -346,7 +347,7 @@
                      * @param {String} [params.templateUrl]
                      */
                     app.fwkUseRouteComponent = (params) => {
-                        app.fwkGetLogger("Fwk").debug("Use route component '" + params.id + "'");
+                        app.fwkGetLogger(LoggerClassName).debug("Use route component '" + params.id + "'");
                         return this._useComponent(params);
                     };
                     // application
@@ -360,7 +361,7 @@
                      * @param {String} [params.locale]
                      */
                     app.fwkBootstrapComponent = (params) => {
-                        app.fwkGetLogger("Fwk").debug("Bootstrap component '" + params.id + "'");
+                        app.fwkGetLogger(LoggerClassName).debug("Bootstrap component '" + params.id + "'");
                         this._bootstrapComponent(params);
                     };
                 },
@@ -372,7 +373,7 @@
                         } else {
                             const componentUrl = this._getComponentUrl(params);
                             app.fwkLoadJs(componentUrl).then(() => {
-                                app.fwkGetLogger("Fwk").debug("Component file '" + componentUrl + "' loaded");
+                                app.fwkGetLogger(LoggerClassName).debug("Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
                             });
@@ -388,7 +389,7 @@
                         } else {
                             const request = Vue.http.get(templateUrl);
                             app.fwkCallService(request).then((response) => {
-                                app.fwkGetLogger("Fwk").debug("Template file '" + templateUrl + "' loaded");
+                                app.fwkGetLogger(LoggerClassName).debug("Template file '" + templateUrl + "' loaded");
                                 templateDescription = this._setTemplateDescription(templateUrl, response.bodyText);
                                 resolve(templateDescription);
                             });
@@ -521,10 +522,10 @@
                      * @name fwkGetLogger
                      * @function
                      * @memberof app
-                     * @param {String} context
+                     * @param {String} className
                      * @returns {Object}
                      */
-                    app.fwkGetLogger = function (context) {
+                    app.fwkGetLogger = (className) => {
                         return {
                             _console: console,
                             debug: function (message) {
@@ -534,7 +535,7 @@
                                 this._console.warn(this._getMessage(message));
                             },
                             _getMessage: function (message) {
-                                return context + ": " + message;
+                                return className + ": " + message;
                             }
                         }
                     }
