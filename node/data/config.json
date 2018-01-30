@@ -1,0 +1,35 @@
+{
+    "vendors": [
+        {
+            "folder": "node_modules/vuetify/dist",
+            "files": [
+                "vuetify.min.css",
+                "vuetify.min.js"
+            ]
+        },
+        {
+            "folder": "node_modules/vue/dist",
+            "files": [
+                "vue.min.js"
+            ]
+        },
+        {
+            "folder": "node_modules/vue-router/dist",
+            "files": [
+                "vue-router.min.js"
+            ]
+        },
+        {
+            "folder": "node_modules/vue-resource/dist",
+            "files": [
+                "vue-resource.min.js"
+            ]
+        },
+        {
+            "folder": "node_modules/vue-i18n/dist",
+            "files": [
+                "vue-i18n.min.js"
+            ]
+        }
+    ]
+}

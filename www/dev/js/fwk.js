@@ -52,12 +52,12 @@
                     });
                     this._router.afterEach((to, from) => {
                         // dispatch event
-                        app.fwkGetEventBus().emit("FWK_ROUTE_CHANGED", {
+                        app.fwkGetEventBus().emit("FWK_BUS_ROUTE_CHANGED", {
                             from: from.fullPath,
                             to: to.fullPath
                         });
                     });
-                    app.fwkGetEventBus().on("FWK_USER_SIGNED_IN", () => {
+                    app.fwkGetEventBus().on("FWK_BUS_USER_SIGNED_IN", () => {
                         if (this._requestedRouteBeforeLogin != null) {
                             this.navigate(this._requestedRouteBeforeLogin);
                             this._requestedRouteBeforeLogin = null;
@@ -65,13 +65,13 @@
                             this.navigate(this._routes.secureDefault);
                         }
                     });
-                    app.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
+                    app.fwkGetEventBus().on("FWK_BUS_USER_SIGNED_OUT", () => {
                         this.navigate(this._routes.default);
                     });
-                    app.fwkGetEventBus().on("FWK_USER_REGISTERED", () => {
+                    app.fwkGetEventBus().on("FWK_BUS_USER_REGISTERED", () => {
                         this.navigate(this._routes.login);
                     });
-                    app.fwkGetEventBus().on("FWK_SESSION_TIMED_OUT", () => {
+                    app.fwkGetEventBus().on("FWK_BUS_SESSION_TIMED_OUT", () => {
                         this.navigate(this._routes.login);
                     });
                     return this._router;
@@ -202,7 +202,7 @@
                 },
                 sessionTimedOut: function () {
                     this._setToken(null);
-                    app.fwkGetEventBus().emit("FWK_SESSION_TIMED_OUT");
+                    app.fwkGetEventBus().emit("FWK_BUS_SESSION_TIMED_OUT");
                 },
                 isConnected: function () {
                     return (Vue.http.headers.common["Authorization"] != null);
@@ -214,7 +214,7 @@
                             password: password
                         });
                         app.fwkCallService(request).then(() => {
-                            app.fwkGetEventBus().emit("FWK_USER_REGISTERED");
+                            app.fwkGetEventBus().emit("FWK_BUS_USER_REGISTERED");
                         }, (response) => {
                             reject(response);
                         });
@@ -228,7 +228,7 @@
                         });
                         app.fwkCallService(request).then((response) => {
                             this._setToken(response.body.data.token);
-                            app.fwkGetEventBus().emit("FWK_USER_SIGNED_IN", response.body.data.user);
+                            app.fwkGetEventBus().emit("FWK_BUS_USER_SIGNED_IN", response.body.data.user);
                         }, (response) => {
                             reject(response);
                         });
@@ -236,7 +236,7 @@
                 },
                 _logout: function () {
                     this._setToken(null);
-                    app.fwkGetEventBus().emit("FWK_USER_SIGNED_OUT");
+                    app.fwkGetEventBus().emit("FWK_BUS_USER_SIGNED_OUT");
                 },
                 _setToken: function (token) {
                     if (!token) {
@@ -260,7 +260,7 @@
                     };
                 },
                 emit: function (eventName, data) {
-                    Fwk.util.LogUtils.debug("Fwk: EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
+                    app.fwkGetLogger("Fwk").debug("EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
                     this._vue.$emit(eventName, data);
                 },
                 on: function (eventName, callback) {
@@ -286,7 +286,7 @@
                      * @param {Object} description
                      */
                     app.fwkDefineComponent = (params, description) => {
-                        Fwk.util.LogUtils.debug("Fwk: Define component '" + params.id + "'");
+                        app.fwkGetLogger("Fwk").debug("Define component '" + params.id + "'");
                         this._defineComponent(params.id, description);
                     };
                     /**
@@ -299,7 +299,7 @@
                      * @param {String} [params.templateUrl]
                      */
                     app.fwkUseComponent = (params) => {
-                        Fwk.util.LogUtils.debug("Fwk: Use component '" + params.id + "'");
+                        app.fwkGetLogger("Fwk").debug("Use component '" + params.id + "'");
                         Vue.component(Fwk.util.StringUtils.dasherize(params.id), this._useComponent(params));
                     };
                     // filters
@@ -311,9 +311,9 @@
                      * @param {function} callback
                      */
                     app.fwkDefineFilter = (name, callback) => {
-                        Fwk.util.LogUtils.debug("Fwk: Define filter '" + name + "'");
+                        app.fwkGetLogger("Fwk").debug("Define filter '" + name + "'");
                         if (this._filterCache[name]) {
-                            Fwk.util.LogUtils.warn("Fwk: Filter '" + name + "' already registered... definition's crushed !");
+                            app.getLogger("Fwk").warn("Filter '" + name + "' already registered... definition's crushed !");
                         }
                         Vue.filter(name, callback);
                         this._filterCache[name] = true;
@@ -328,9 +328,9 @@
                      * @param {Object} description
                      */
                     app.fwkDefineDirective = (params, description) => {
-                        Fwk.util.LogUtils.debug("Fwk: Define directive '" + params.id + "'");
+                        app.fwkGetLogger("Fwk").debug("Define directive '" + params.id + "'");
                         if (this._directiveCache[params.id]) {
-                            Fwk.util.LogUtils.warn("Fwk: Directive '" + params.id + "' already registered... definition's crushed !");
+                            app.getLogger("Fwk").warn("Directive '" + params.id + "' already registered... definition's crushed !");
                         }
                         Vue.directive(Fwk.util.StringUtils.dasherize(params.id), description);
                         this._directiveCache[params.id] = true;
@@ -346,7 +346,7 @@
                      * @param {String} [params.templateUrl]
                      */
                     app.fwkUseRouteComponent = (params) => {
-                        Fwk.util.LogUtils.debug("Fwk: Use route component '" + params.id + "'");
+                        app.fwkGetLogger("Fwk").debug("Use route component '" + params.id + "'");
                         return this._useComponent(params);
                     };
                     // application
@@ -360,7 +360,7 @@
                      * @param {String} [params.locale]
                      */
                     app.fwkBootstrapComponent = (params) => {
-                        Fwk.util.LogUtils.debug("Fwk: Bootstrap component '" + params.id + "'");
+                        app.fwkGetLogger("Fwk").debug("Bootstrap component '" + params.id + "'");
                         this._bootstrapComponent(params);
                     };
                 },
@@ -372,7 +372,7 @@
                         } else {
                             const componentUrl = this._getComponentUrl(params);
                             app.fwkLoadJs(componentUrl).then(() => {
-                                Fwk.util.LogUtils.debug("Fwk: Component file '" + componentUrl + "' loaded");
+                                app.fwkGetLogger("Fwk").debug("Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
                             });
@@ -388,7 +388,7 @@
                         } else {
                             const request = Vue.http.get(templateUrl);
                             app.fwkCallService(request).then((response) => {
-                                Fwk.util.LogUtils.debug("Fwk: Template file '" + templateUrl + "' loaded");
+                                app.fwkGetLogger("Fwk").debug("Template file '" + templateUrl + "' loaded");
                                 templateDescription = this._setTemplateDescription(templateUrl, response.bodyText);
                                 resolve(templateDescription);
                             });
@@ -465,7 +465,7 @@
                      * @name fwkLoadJs
                      * @function
                      * @memberof app
-                     * @param {string} url
+                     * @param {String} url
                      * @returns {Promise}
                      */
                     app.fwkLoadJs = (url) => {
@@ -474,10 +474,10 @@
                 },
                 _loadJs: function (url) {
                     return new Promise((resolve) => {
-                        app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
+                        app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_START");
                         const script = document.createElement("script");
                         script.onload = () => {
-                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
+                            app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_STOP");
                             resolve();
                         };
                         document.head.appendChild(script);
@@ -487,12 +487,12 @@
                 },
                 _callService: function (request) {
                     return new Promise((resolve, reject) => {
-                        app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
+                        app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_START");
                         request.then((response) => {
-                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
+                            app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_STOP");
                             resolve(response);
                         }, (response) => {
-                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
+                            app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_STOP");
                             if (Fwk.manager.SecurityManager.isConnected() && response.status === 401) {
                                 Fwk.manager.SecurityManager.sessionTimedOut();
                             } else {
@@ -501,21 +501,50 @@
                         });
                     });
                 }
+            },
+            ApplicationManager: {
+                init: function () {
+                    window.applicationCache.addEventListener("updateready", () => {
+                        this._updateReady();
+                    });
+                    if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
+                        this._updateReady();
+                    }
+                },
+                _updateReady: function () {
+                    app.fwkGetEventBus().emit("FWK_BUS_APPLICATION_UPDATE_READY");
+                }
+            },
+            LogManager: {
+                init: function () {
+                    /**
+                     * @name fwkGetLogger
+                     * @function
+                     * @memberof app
+                     * @param {String} context
+                     * @returns {Object}
+                     */
+                    app.fwkGetLogger = function (context) {
+                        return {
+                            _console: console,
+                            debug: function (message) {
+                                this._console.debug(this._getMessage(message));
+                            },
+                            warn: function (message) {
+                                this._console.warn(this._getMessage(message));
+                            },
+                            _getMessage: function (message) {
+                                return context + ": " + message;
+                            }
+                        }
+                    }
+                }
             }
         },
         util: {
             StringUtils: {
                 dasherize: function (str) {
                     return str.trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase().substring(1);
-                }
-            },
-            LogUtils: {
-                _console: console,
-                debug: function (message) {
-                    this._console.debug(message);
-                },
-                warn: function (message) {
-                    this._console.warn(message);
                 }
             }
         }

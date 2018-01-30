@@ -1,6 +1,7 @@
 'use strict';
 
 const pkg = require('./package.json');
+const Config = require('./node/js/Config');
 
 const gulp = require('gulp');
 const del = require('del');
@@ -12,6 +13,7 @@ const eslint = require('gulp-eslint');
 const uglify = require('gulp-uglify-es').default;
 const imagemin = require('gulp-imagemin');
 const jsdoc = require('gulp-jsdoc3');
+const fs = require('fs');
 
 gulp.task('prepare', () => {
     return del(['./www/prod']);
@@ -52,7 +54,41 @@ gulp.task('generate-doc', function () {
     const config = require('./jsdoc.json');
     return gulp.src(['./README.md', './www/dev/js/fwk.js'], { read: false }).pipe(jsdoc(config));
 });
+gulp.task('generate-manifest', (callback) => {
+    const baseDir = './www/dev';
+    const readDir = (dir) => {
+        fs.readdirSync(dir).forEach((item, index, array) => {
+            if (item !== '.' && item !== '..') {
+                const path = dir + '/' + item;
+                const stats = fs.statSync(path);
+                if (stats.isDirectory()) {
+                    readDir(path);
+                }
+                else {
+                    content += path.replace(baseDir + '/', '') + '\n';
+                }
+            }
+        });
+    };
+    let content = '';
+    content = 'CACHE MANIFEST\n';
+    content += '# ' + pkg.version + '\n';
+    content += 'CACHE:\n';
+    // application files
+    readDir(baseDir);
+    // vendor files
+    Config.getConfig().vendors.forEach((folder, index, array) => {
+        folder.files.forEach((file, index, array) => {
+            content += 'vendors/' + file + '\n';
+        });
+    });
+    content += 'NETWORK:\n';
+    content += '*\n';
+    content += 'FALLBACK:\n';
+    fs.writeFileSync('./www/prod/manifest.cache', content);
+    callback();
+});
 
 gulp.task('default', (callback) => {
-    runSequence('prepare', 'copy-statics', 'optimize-css', 'optimize-html', 'optimize-js', 'optimize-images', 'generate-doc', callback);
+    runSequence('prepare', 'copy-statics', 'optimize-css', 'optimize-html', 'optimize-js', 'optimize-images', 'generate-manifest', 'generate-doc', callback);
 });
