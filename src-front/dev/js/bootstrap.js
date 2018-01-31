@@ -61,9 +61,11 @@
             ]
         }
     ];
+    const navigatorLang = navigator.language.split("-")[0];
+    const locale = /(fr|en)/gi.test(navigatorLang) ? navigatorLang : "en";
     app.fwkBootstrapComponent({
         id: "MainView",
         routes: routes,
-        locale: "en"
+        locale: locale
     });
 }(window.app || (window.app = {})));

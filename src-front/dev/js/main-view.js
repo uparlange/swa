@@ -15,19 +15,19 @@
             }
         },
         created: function () {
-            app.fwkGetEventBus().on("FWK_BUS_USER_SIGNED_IN", (user) => {
+            app.fwkGetEventBus().on("FWK_USER_SIGNED_IN", (user) => {
                 this._refreshProfileMenuLabel(user.firstName + " " + user.lastName);
             });
-            app.fwkGetEventBus().on("FWK_BUS_USER_SIGNED_OUT", () => {
+            app.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
                 this._refreshProfileMenuLabel();
             });
-            app.fwkGetEventBus().on("FWK_BUS_RESOURCE_LOADING_START", () => {
+            app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_START", () => {
                 this.loading = true;
             });
-            app.fwkGetEventBus().on("FWK_BUS_RESOURCE_LOADING_STOP", () => {
+            app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_STOP", () => {
                 this.loading = false;
             });
-            app.fwkGetEventBus().on("FWK_BUS_APPLICATION_UPDATE_READY", () => {
+            app.fwkGetEventBus().on("FWK_APPLICATION_UPDATE_READY", () => {
                 const label = app.fwkGetLabel({ key: "LABEL_NEW_VERSION_AVAILABLE" });
                 app.fwkGetLogger(componentId).debug(label);
             });

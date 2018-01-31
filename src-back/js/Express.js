@@ -7,6 +7,7 @@ const compression = require("compression");
 const Passport = require("./Passport");
 const ExpressStatics = require("./ExpressStatics");
 const ExpressServices = require("./ExpressServices");
+const ExpressViews = require("./ExpressViews");
 const Config = require("./Config");
 
 // body
@@ -23,6 +24,8 @@ exports.start = function () {
         }));
         instance.use(bodyParser.json());
         instance.use(compression());
+        // init views
+        ExpressViews.init(instance);
         // init statics
         ExpressStatics.init(instance);
         // init services

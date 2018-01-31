@@ -3,13 +3,6 @@
     "expressPort": 8080,
     "expressStaticsVendors": [
         {
-            "folder": "node_modules/vuetify/dist",
-            "files": [
-                "vuetify.min.css",
-                "vuetify.min.js"
-            ]
-        },
-        {
             "folder": "node_modules/vue/dist",
             "files": [
                 "vue.min.js"
@@ -31,6 +24,13 @@
             "folder": "node_modules/vue-i18n/dist",
             "files": [
                 "vue-i18n.min.js"
+            ]
+        },
+        {
+            "folder": "node_modules/vuetify/dist",
+            "files": [
+                "vuetify.min.css",
+                "vuetify.min.js"
             ]
         }
     ]

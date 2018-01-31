@@ -53,12 +53,12 @@
                     });
                     this._router.afterEach((to, from) => {
                         // dispatch event
-                        app.fwkGetEventBus().emit("FWK_BUS_ROUTE_CHANGED", {
+                        app.fwkGetEventBus().emit("FWK_ROUTE_CHANGED", {
                             from: from.fullPath,
                             to: to.fullPath
                         });
                     });
-                    app.fwkGetEventBus().on("FWK_BUS_USER_SIGNED_IN", () => {
+                    app.fwkGetEventBus().on("FWK_USER_SIGNED_IN", () => {
                         if (this._requestedRouteBeforeLogin != null) {
                             this.navigate(this._requestedRouteBeforeLogin);
                             this._requestedRouteBeforeLogin = null;
@@ -66,13 +66,13 @@
                             this.navigate(this._routes.secureDefault);
                         }
                     });
-                    app.fwkGetEventBus().on("FWK_BUS_USER_SIGNED_OUT", () => {
+                    app.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
                         this.navigate(this._routes.default);
                     });
-                    app.fwkGetEventBus().on("FWK_BUS_USER_REGISTERED", () => {
+                    app.fwkGetEventBus().on("FWK_USER_REGISTERED", () => {
                         this.navigate(this._routes.login);
                     });
-                    app.fwkGetEventBus().on("FWK_BUS_SESSION_TIMED_OUT", () => {
+                    app.fwkGetEventBus().on("FWK_SESSION_TIMED_OUT", () => {
                         this.navigate(this._routes.login);
                     });
                     return this._router;
@@ -203,7 +203,7 @@
                 },
                 sessionTimedOut: function () {
                     this._setToken(null);
-                    app.fwkGetEventBus().emit("FWK_BUS_SESSION_TIMED_OUT");
+                    app.fwkGetEventBus().emit("FWK_SESSION_TIMED_OUT");
                 },
                 isConnected: function () {
                     return (Vue.http.headers.common["Authorization"] != null);
@@ -215,7 +215,7 @@
                             password: password
                         });
                         app.fwkCallService(request).then(() => {
-                            app.fwkGetEventBus().emit("FWK_BUS_USER_REGISTERED");
+                            app.fwkGetEventBus().emit("FWK_USER_REGISTERED");
                         }, (response) => {
                             reject(response);
                         });
@@ -229,7 +229,7 @@
                         });
                         app.fwkCallService(request).then((response) => {
                             this._setToken(response.body.data.token);
-                            app.fwkGetEventBus().emit("FWK_BUS_USER_SIGNED_IN", response.body.data.user);
+                            app.fwkGetEventBus().emit("FWK_USER_SIGNED_IN", response.body.data.user);
                         }, (response) => {
                             reject(response);
                         });
@@ -237,7 +237,7 @@
                 },
                 _logout: function () {
                     this._setToken(null);
-                    app.fwkGetEventBus().emit("FWK_BUS_USER_SIGNED_OUT");
+                    app.fwkGetEventBus().emit("FWK_USER_SIGNED_OUT");
                 },
                 _setToken: function (token) {
                     if (!token) {
@@ -475,10 +475,10 @@
                 },
                 _loadJs: function (url) {
                     return new Promise((resolve) => {
-                        app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_START");
+                        app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
                         const script = document.createElement("script");
                         script.onload = () => {
-                            app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_STOP");
+                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
                             resolve();
                         };
                         document.head.appendChild(script);
@@ -488,12 +488,12 @@
                 },
                 _callService: function (request) {
                     return new Promise((resolve, reject) => {
-                        app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_START");
+                        app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
                         request.then((response) => {
-                            app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_STOP");
+                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
                             resolve(response);
                         }, (response) => {
-                            app.fwkGetEventBus().emit("FWK_BUS_RESOURCE_LOADING_STOP");
+                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
                             if (Fwk.manager.SecurityManager.isConnected() && response.status === 401) {
                                 Fwk.manager.SecurityManager.sessionTimedOut();
                             } else {
@@ -505,15 +505,26 @@
             },
             ApplicationManager: {
                 init: function () {
+                    // manifest
                     window.applicationCache.addEventListener("updateready", () => {
                         this._updateReady();
                     });
                     if (window.applicationCache.status === window.applicationCache.UPDATEREADY) {
                         this._updateReady();
                     }
+                    // connection
+                    window.addEventListener("offline", () => {
+                        this._onlineStatus();
+                    });
+                    window.addEventListener("online", () => {
+                        this._onlineStatus();
+                    });
                 },
                 _updateReady: function () {
-                    app.fwkGetEventBus().emit("FWK_BUS_APPLICATION_UPDATE_READY");
+                    app.fwkGetEventBus().emit("FWK_APPLICATION_UPDATE_READY");
+                },
+                _onlineStatus: function () {
+                    app.fwkGetEventBus().emit("FWK_APPLICATION_ONLINE_STATUS_CHANGED", { online: navigator.onLine });
                 }
             },
             LogManager: {
