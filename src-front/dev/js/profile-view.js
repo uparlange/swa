@@ -15,7 +15,7 @@
         },
         methods: {
             logout: function () {
-                app.fwkUserLogout();
+                app.fwkSetAuthorizationToken(null);
             }
         }
     });

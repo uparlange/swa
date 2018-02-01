@@ -15,11 +15,23 @@
             }
         },
         created: function () {
-            app.fwkGetEventBus().on("FWK_USER_SIGNED_IN", (user) => {
-                this._refreshProfileMenuLabel(user.firstName + " " + user.lastName);
+            app.fwkGetEventBus().on("FWK_AUTHENTICATION_NEEDED", () => {
+                app.fwkNavigate("/login");
             });
-            app.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
-                this._refreshProfileMenuLabel();
+            app.fwkGetEventBus().on("FWK_SECURITY_TOKEN_FILLED", (event) => {
+                if (event.token) {
+                    // TODO manage when no pre route asked
+                    const request = this.$http.get("/services/user");
+                    app.fwkCallService(request).then((response) => {
+                        const user = response.body.data.user;
+                        this._refreshProfileMenuLabel(user.firstName + " " + user.lastName);
+                    }, () => {
+                        // TODO manager error
+                    });
+                } else {
+                    this._refreshProfileMenuLabel();
+                    app.fwkNavigate("/home");
+                }
             });
             app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_START", () => {
                 this.loading = true;

@@ -12,12 +12,6 @@
         manager: {
             RouterManager: {
                 _router: null,
-                _routes: {
-                    login: null,
-                    default: null,
-                    secureDefault: null,
-                    secures: {}
-                },
                 _scrollPositions: {},
                 _requestedRouteBeforeLogin: null,
                 init: function () {
@@ -30,9 +24,19 @@
                     app.fwkGetCurrentRoute = () => {
                         return this._getCurrentRoute();
                     };
+                    /**
+                     * @name fwkNavigate
+                     * @function
+                     * @memberof app
+                     * @param {String} location
+                     * @param {Function} onComplete
+                     * @param {Function} onAbort
+                     */
+                    app.fwkNavigate = (location, onComplete, onAbort) => {
+                        this.navigate(location, onComplete, onAbort);
+                    };
                 },
                 initForApplication: function (routes) {
-                    this._analyzeRoutes(routes);
                     this._router = new VueRouter({
                         routes: routes,
                         scrollBehavior: (to) => {
@@ -44,10 +48,13 @@
                         // save scroll position
                         this._scrollPositions[from.fullPath] = window.pageYOffset;
                         // check if route secured
-                        if (this._routes.secures[to.fullPath] && !Fwk.manager.SecurityManager.isConnected()) {
-                            this._requestedRouteBeforeLogin = to.fullPath;
-                            next(this._routes.login);
-                        } else {
+                        if (to.matched.some((record) => { return record.meta.secure }) && !Fwk.manager.SecurityManager.isConnected()) {
+                            app.fwkGetEventBus().emit("FWK_AUTHENTICATION_NEEDED", {
+                                to: to.fullPath
+                            });
+                            next(false);
+                        }
+                        else {
                             next();
                         }
                     });
@@ -58,22 +65,14 @@
                             to: to.fullPath
                         });
                     });
-                    app.fwkGetEventBus().on("FWK_USER_SIGNED_IN", () => {
+                    app.fwkGetEventBus().on("FWK_AUTHENTICATION_NEEDED", (event) => {
+                        this._requestedRouteBeforeLogin = event.to;
+                    });
+                    app.fwkGetEventBus().on("FWK_SECURITY_TOKEN_FILLED", () => {
                         if (this._requestedRouteBeforeLogin != null) {
                             this.navigate(this._requestedRouteBeforeLogin);
                             this._requestedRouteBeforeLogin = null;
-                        } else {
-                            this.navigate(this._routes.secureDefault);
                         }
-                    });
-                    app.fwkGetEventBus().on("FWK_USER_SIGNED_OUT", () => {
-                        this.navigate(this._routes.default);
-                    });
-                    app.fwkGetEventBus().on("FWK_USER_REGISTERED", () => {
-                        this.navigate(this._routes.login);
-                    });
-                    app.fwkGetEventBus().on("FWK_SESSION_TIMED_OUT", () => {
-                        this.navigate(this._routes.login);
                     });
                     return this._router;
                 },
@@ -81,27 +80,7 @@
                     this._router.push(location, onComplete, onAbort);
                 },
                 _getCurrentRoute: function () {
-                    return this._router.currentRoute.fullPath;
-                },
-                _analyzeRoutes: function (routes, basePath) {
-                    routes.forEach((element) => {
-                        const path = (basePath ? (basePath + "/") : "") + element.path;
-                        if (element.secure) {
-                            this._routes.secures[path] = true;
-                            if (element.default) {
-                                this._routes.secureDefault = path;
-                            }
-                        } else {
-                            if (element.login) {
-                                this._routes.login = path;
-                            } else if (element.default) {
-                                this._routes.default = path;
-                            }
-                        }
-                        if (element.children) {
-                            this._analyzeRoutes(element.children, element.path);
-                        }
-                    });
+                    return this._router.currentRoute;
                 }
             },
             I18nManager: {
@@ -172,72 +151,26 @@
             SecurityManager: {
                 init: function () {
                     /**
-                     * @name fwkUserLogin
+                     * @name fwkSetAuthorizationToken
                      * @function
                      * @memberof app
-                     * @param {String} login
-                     * @param {String} password
+                     * @param {String} token 
                      */
-                    app.fwkUserLogin = (login, password) => {
-                        return this._login(login, password);
-                    };
-                    /**
-                     * @name fwkUserRegister
-                     * @function
-                     * @memberof app
-                     * @param {String} login
-                     * @param {String} password
-                     */
-                    app.fwkUserRegister = (login, password) => {
-                        return this._register(login, password);
-                    };
-                    /**
-                     * @name fwkUserLogout
-                     * @function
-                     * @memberof app
-                     * @function
-                     */
-                    app.fwkUserLogout = () => {
-                        return this._logout();
+                    app.fwkSetAuthorizationToken = (token) => {
+                        this._setToken(token);
+                        app.fwkGetEventBus().emit("FWK_SECURITY_TOKEN_FILLED", {
+                            token: token
+                        });
                     };
                 },
                 sessionTimedOut: function () {
-                    this._setToken(null);
-                    app.fwkGetEventBus().emit("FWK_SESSION_TIMED_OUT");
+                    this._setToken();
+                    app.fwkGetEventBus().emit("FWK_AUTHENTICATION_NEEDED", {
+                        to: app.fwkGetCurrentRoute().fullPath
+                    });
                 },
                 isConnected: function () {
                     return (Vue.http.headers.common["Authorization"] != null);
-                },
-                _register: function (login, password) {
-                    return new Promise((resolve, reject) => {
-                        const request = Vue.http.post("/services/register", {
-                            login: login,
-                            password: password
-                        });
-                        app.fwkCallService(request).then(() => {
-                            app.fwkGetEventBus().emit("FWK_USER_REGISTERED");
-                        }, (response) => {
-                            reject(response);
-                        });
-                    });
-                },
-                _login: function (login, password) {
-                    return new Promise((resolve, reject) => {
-                        const request = Vue.http.post("/services/login", {
-                            login: login,
-                            password: password
-                        });
-                        app.fwkCallService(request).then((response) => {
-                            this._setToken(response.body.data.token);
-                            app.fwkGetEventBus().emit("FWK_USER_SIGNED_IN", response.body.data.user);
-                        }, (response) => {
-                            reject(response);
-                        });
-                    });
-                },
-                _logout: function () {
-                    this._setToken(null);
-                    app.fwkGetEventBus().emit("FWK_USER_SIGNED_OUT");
                 },
                 _setToken: function (token) {
                     if (!token) {

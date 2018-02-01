@@ -26,12 +26,16 @@
         methods: {
             validate: function () {
                 if (this.$refs.form.validate()) {
-                    this.errorMessage = "";
-                    app.fwkUserRegister(this.login, this.password).then(() => {
-                        // Nothing
+                    const request = this.$http.post("/services/register", {
+                        login: this.login,
+                        password: this.password
+                    });
+                    app.fwkCallService(request).then(() => {
+                        // TODO display register ok
+                        app.fwkNavigate("/login");
                     }, (response) => {
                         this._showMessage(response.body.message);
-                    })
+                    });
                 }
             },
             _showMessage: function (value) {

@@ -14,10 +14,7 @@ exports.init = function (instance) {
         CredentialDAO.add(req.body.login, req.body.password).then((credential) => {
             UserDAO.update({ _id: credential.id, firstName: req.body.login, lastName: "" }).then((user) => {
                 res.json({
-                    message: "OK",
-                    data: {
-                        user: user
-                    }
+                    message: "OK"
                 });
             }, (err) => {
                 res.status(400).json(err);
@@ -30,15 +27,14 @@ exports.init = function (instance) {
         CredentialDAO.findByLoginAndPassord(req.body.login, req.body.password).then((credential) => {
             const payload = {
                 id: credential._id,
-                exp: Math.floor(Date.now() / 1000) + (60 * 60) //1 hour
+                exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
             };
             const token = jwt.sign(payload, Passport.SECRET_OR_KEY);
             UserDAO.findById(payload.id).then((user) => {
                 res.json({
                     message: "OK",
                     data: {
-                        token: token,
-                        user: user
+                        token: token
                     }
                 });
             }, (err) => {

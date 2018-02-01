@@ -8,7 +8,7 @@
             }
         },
         created: function () {
-            this._refreshBreadcrumb(app.fwkGetCurrentRoute());
+            this._refreshBreadcrumb(app.fwkGetCurrentRoute().fullPath);
             this._FWK_ROUTE_CHANGED_handler = (event) => {
                 this._refreshBreadcrumb(event.to);
             };

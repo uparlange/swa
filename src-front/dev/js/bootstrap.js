@@ -9,12 +9,10 @@
         {
             path: "/home",
             component: app.fwkUseRouteComponent({ id: "HomeView" }),
-            default: true
         },
         {
             path: "/login",
             component: app.fwkUseRouteComponent({ id: "LoginView", templateUrl: "html/sign-in-up-view.html" }),
-            login: true
         },
         {
             path: "/register",
@@ -23,8 +21,9 @@
         {
             path: "/myspace",
             component: app.fwkUseRouteComponent({ id: "MySpaceView" }),
-            default: true,
-            secure: true,
+            meta: {
+                secure: true
+            },
             children: [
                 {
                     path: "/",
@@ -33,12 +32,16 @@
                 {
                     path: "events",
                     component: app.fwkUseRouteComponent({ id: "EventsView" }),
-                    secure: true
+                    meta: {
+                        secure: true
+                    }
                 },
                 {
                     path: "profile",
                     component: app.fwkUseRouteComponent({ id: "ProfileView" }),
-                    secure: true
+                    meta: {
+                        secure: true
+                    }
                 }
             ]
         },

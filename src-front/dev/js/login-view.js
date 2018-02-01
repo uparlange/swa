@@ -37,11 +37,15 @@
         methods: {
             validate: function () {
                 if (this.$refs.form.validate()) {
-                    app.fwkUserLogin(this.login, this.password).then(() => {
-
+                    const request = this.$http.post("/services/login", {
+                        login: this.login,
+                        password: this.password
+                    });
+                    app.fwkCallService(request).then((response) => {
+                        app.fwkSetAuthorizationToken(response.body.data.token);
                     }, (response) => {
                         this._showMessage(response.body.message);
-                    })
+                    });
                 }
             },
             _showMessage: function (value) {
