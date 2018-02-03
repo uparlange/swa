@@ -21,5 +21,6 @@
     "ERROR_FIELD_IS_REQUIRED": "Le champs est requis",
     "ERROR_FIELD_MUST_BE_VALID_EMAIL": "Le champs doit être une adresse email valide",
     "ERROR_FIELD_HAS_MIN_LENGTH": "Le champs doit faire plus de {length} caractères",
-    "ERROR_LOGIN_ALREADY_EXISTS": "L'identifiant existe déjà"
+    "ERROR_LOGIN_ALREADY_EXISTS": "L'identifiant existe déjà",
+    "ERROR_TECHNICAL_ERROR": "Une erreur technique est survenue"
 }

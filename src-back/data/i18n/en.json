@@ -21,5 +21,6 @@
     "ERROR_FIELD_IS_REQUIRED": "Field is required",
     "ERROR_FIELD_MUST_BE_VALID_EMAIL": "Field must be a valid email",
     "ERROR_FIELD_HAS_MIN_LENGTH": "Field must be more than {length} characters",
-    "ERROR_LOGIN_ALREADY_EXISTS": "Login already exists"
+    "ERROR_LOGIN_ALREADY_EXISTS": "Login already exists",
+    "ERROR_TECHNICAL_ERROR": "A technical error occurred"
 }
