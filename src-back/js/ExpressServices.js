@@ -1,16 +1,18 @@
 // external dependencies
 const jwt = require("jsonwebtoken");
+const fs = require("fs");
 
 // application dependencies
-const Passport = require("./Passport");
-const CredentialDAO = require("./CredentialDAO");
-const UserDAO = require("./UserDAO");
-const EventDAO = require("./EventDAO");
+const Passport = require(__dirname + "/Passport");
+const CredentialDAO = require(__dirname + "/CredentialDAO");
+const UserDAO = require(__dirname + "/UserDAO");
+const EventDAO = require(__dirname + "/EventDAO");
+const Config = require(__dirname + "/Config");
 
 // exported methods
 exports.init = function (instance) {
     // common
-    instance.post("/services/register", (req, res) => {
+    instance.post("/services/register", function (req, res) {
         CredentialDAO.add(req.body.login, req.body.password).then((credential) => {
             UserDAO.update({ _id: credential.id, firstName: req.body.login, lastName: "" }).then((user) => {
                 res.json({
@@ -23,7 +25,7 @@ exports.init = function (instance) {
             res.status(400).json(err);
         })
     });
-    instance.post("/services/login", (req, res) => {
+    instance.post("/services/login", function (req, res) {
         CredentialDAO.findByLoginAndPassord(req.body.login, req.body.password).then((credential) => {
             const payload = {
                 id: credential._id,
@@ -42,6 +44,19 @@ exports.init = function (instance) {
             });
         }, (err) => {
             res.status(401).json(err);
+        });
+    });
+    // locales
+    instance.get("/services/locales", function (req, res) {
+        const locales = [];
+        Config.getConfig().expressStaticsLocales.files.forEach((file) => {
+            locales.push(file.replace(".json", ""));
+        });
+        res.json({
+            message: "OK",
+            data: {
+                locales: locales
+            }
         });
     });
     // user

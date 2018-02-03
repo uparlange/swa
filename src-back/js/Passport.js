@@ -3,8 +3,8 @@ const passport = require("passport");
 const passportJwt = require("passport-jwt");
 
 // application dependencies
-const UserDAO = require("./UserDAO");
-const Config = require("./Config");
+const UserDAO = require(__dirname + "/UserDAO");
+const Config = require(__dirname + "/Config");
 
 // body
 const passportSecretOrKey = Config.getConfig().passportSecretOrKey;

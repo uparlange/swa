@@ -27,6 +27,10 @@
         },
         created: function () {
             this._init(app.fwkGetCurrentRoute().params.type);
+            if (window.location.search.indexOf("debug")) {
+                this.login = "j.doe@lost.com";
+                this.password = "password";
+            }
         },
         beforeRouteUpdate(to, from, next) {
             this._init(to.params.type);
@@ -58,7 +62,7 @@
                     login: this.login,
                     password: this.password
                 });
-                app.fwkCallService(request).then((response) => {
+                app.fwkCallService(request).then(() => {
                     // TODO display register ok
                     app.fwkNavigate("/sign/in");
                 }, (response) => {

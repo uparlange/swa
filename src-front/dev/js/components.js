@@ -1,5 +1,5 @@
 "use strict";
 
-(function () {
-    
+(function (app) {
+    app.fwkUseComponent({ id: "TestComponent" });
 }(window.app || (window.app = {})));

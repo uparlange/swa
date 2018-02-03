@@ -1,33 +1,46 @@
 {
     "passportSecretOrKey": "mySuperSecretKey",
     "expressPort": 8080,
+    "expressStaticsLocales": {
+        "folder": "src-back/data/i18n",
+        "path": "/data/i18n",
+        "files": [
+            "en.json",
+            "fr.json"
+        ]
+    },
     "expressStaticsVendors": [
         {
             "folder": "node_modules/vue/dist",
+            "path": "/vendors",
             "files": [
                 "vue.min.js"
             ]
         },
         {
             "folder": "node_modules/vue-router/dist",
+            "path": "/vendors",
             "files": [
                 "vue-router.min.js"
             ]
         },
         {
             "folder": "node_modules/vue-resource/dist",
+            "path": "/vendors",
             "files": [
                 "vue-resource.min.js"
             ]
         },
         {
             "folder": "node_modules/vue-i18n/dist",
+            "path": "/vendors",
             "files": [
                 "vue-i18n.min.js"
             ]
         },
         {
             "folder": "node_modules/vuetify/dist",
+            "path": "/vendors",
             "files": [
                 "vuetify.min.css",
                 "vuetify.min.js"

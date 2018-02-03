@@ -47,15 +47,15 @@
             children: [
                 {
                     path: "/",
-                    redirect: "page1"
+                    redirect: "vue"
                 },
                 {
-                    path: "page1",
-                    component: app.fwkUseRouteComponent({ id: "TestPage1View", templateUrl: "html/test-page-view.html" }),
+                    path: "vue",
+                    component: app.fwkUseRouteComponent({ id: "TestVueView" })
                 },
                 {
-                    path: "page2",
-                    component: app.fwkUseRouteComponent({ id: "TestPage2View", templateUrl: "html/test-page-view.html" }),
+                    path: "i18n",
+                    component: app.fwkUseRouteComponent({ id: "TestI18nView" })
                 }
             ]
         }

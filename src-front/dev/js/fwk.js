@@ -105,19 +105,29 @@
                     app.fwkGetCurrentLocale = () => {
                         return this._getLocale();
                     };
+                    /**
+                     * @name fwkGetSetLocale
+                     * @function
+                     * @memberof app
+                     * @param {String} locale
+                     * @returns {String}
+                     */
+                    app.fwkGetSetLocale = (locale) => {
+                        this._setLocale(locale);
+                    };
                 },
                 initForApplication: function (locale) {
-                    this.setLocale(locale);
+                    this._setLocale(locale);
                     return this._i18n;
                 },
-                setLocale: function (locale) {
+                _setLocale: function (locale) {
                     if (this._locale !== locale) {
                         this._locale = locale;
                         if (this._i18n.messages[this._locale] !== undefined) {
-                            this._setLocale(this._locale);
+                            this._setUpdateLocale(this._locale);
                         } else {
                             this._initLocale(this._locale).then(() => {
-                                this._setLocale(this._locale);
+                                this._setUpdateLocale(this._locale);
                             });
                         }
                     }
@@ -129,7 +139,7 @@
                     params = params || {};
                     return this._i18n.t(params.key, params.locale, params.values);
                 },
-                _setLocale: function (locale) {
+                _setUpdateLocale: function (locale) {
                     this._i18n.locale = locale;
                     document.querySelector("html").setAttribute("lang", locale);
                 },

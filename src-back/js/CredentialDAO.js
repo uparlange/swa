@@ -2,7 +2,7 @@
 const bcrypt = require("bcryptjs");
 
 // application dependencies
-const PouchDB = require("./PouchDB");
+const PouchDB = require(__dirname + "/PouchDB");
 
 // body
 const salt = 10;

@@ -49,10 +49,6 @@ gulp.task('optimize-js', (callback) => {
     runSequence('analyze-js', 'uglify-js', callback);
 });
 
-gulp.task('copy-statics', () => {
-    return gulp.src(SRC_FRONT + '/dev/data/**/*.*').pipe(gulp.dest(SRC_FRONT + '/prod/data'));
-});
-
 gulp.task('generate-doc', function () {
     const config = require('./jsdoc.json');
     return gulp.src(['./README.md', SRC_FRONT + '/dev/js/fwk.js'], { read: false }).pipe(jsdoc(config));
@@ -79,10 +75,16 @@ gulp.task('generate-manifest', (callback) => {
     content += 'CACHE:\n';
     // application files
     readDir(baseDir);
+    // locales
+    const esl = Config.getConfig().expressStaticsLocales;
+    esl.files.forEach((file, index, array) => {
+        content += esl.path.substring(1) + '/' + file + '\n';
+    });
     // vendor files
-    Config.getConfig().expressStaticsVendors.forEach((folder, index, array) => {
-        folder.files.forEach((file, index, array) => {
-            content += 'vendors/' + file + '\n';
+    const esv = Config.getConfig().expressStaticsVendors;
+    esv.forEach((vendor, index, array) => {
+        vendor.files.forEach((file, index, array) => {
+            content += vendor.path.substring(1) + '/' + file + '\n';
         });
     });
     content += 'NETWORK:\n';
@@ -93,5 +95,5 @@ gulp.task('generate-manifest', (callback) => {
 });
 
 gulp.task('default', (callback) => {
-    runSequence('prepare', 'copy-statics', 'optimize-css', 'optimize-html', 'optimize-js', 'optimize-images', 'generate-manifest', 'generate-doc', callback);
+    runSequence('prepare', 'optimize-css', 'optimize-html', 'optimize-js', 'optimize-images', 'generate-manifest', 'generate-doc', callback);
 });

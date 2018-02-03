@@ -1,5 +1,5 @@
 // application dependencies
-const PouchDB = require("./PouchDB");
+const PouchDB = require(__dirname + "/PouchDB");
 
 // body
 const mockData = {

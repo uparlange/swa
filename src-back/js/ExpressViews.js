@@ -1,11 +1,11 @@
 // application dependencies
-const Config = require("./Config");
-const pkg = require("./../../package.json");
+const Config = require(__dirname + "/Config");
+const pkg = require(__dirname + "/../../package.json");
 
 // exported methods
 exports.init = function (instance) {
     // init
-    instance.set("views", "./src-front/views");
+    instance.set("views", Config.getConfig().srcFrontPath + "/views");
     instance.set("view engine", "pug");
     // index
     instance.get("/", function (req, res) {

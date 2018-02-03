@@ -1,4 +1,7 @@
 // exported methods
 exports.getConfig = function () {
-    return require("./../data/config.json");
+    const config = require(__dirname + "/../data/config.json");
+    config.srcBackPath = __dirname + "/../../src-back";
+    config.srcFrontPath = __dirname + "/../../src-front";
+    return config;
 }

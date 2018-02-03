@@ -4,11 +4,11 @@ const bodyParser = require("body-parser");
 const compression = require("compression");
 
 // application dependencies
-const Passport = require("./Passport");
-const ExpressStatics = require("./ExpressStatics");
-const ExpressServices = require("./ExpressServices");
-const ExpressViews = require("./ExpressViews");
-const Config = require("./Config");
+const Passport = require(__dirname + "/Passport");
+const ExpressStatics = require(__dirname + "/ExpressStatics");
+const ExpressServices = require(__dirname + "/ExpressServices");
+const ExpressViews = require(__dirname + "/ExpressViews");
+const Config = require(__dirname + "/Config");
 
 // body
 let instance = null;

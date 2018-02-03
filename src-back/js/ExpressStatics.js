@@ -2,13 +2,19 @@
 const express = require("express");
 
 // application dependencies
-const Config = require("./Config");
+const Config = require(__dirname + "/Config");
 
 // exported methods
 exports.init = function (instance) {
-    const www = (process.env.NODE_ENV === "production") ? "src-front/prod" : "src-front/dev";
+    // www
+    const www = Config.getConfig().srcFrontPath + ((process.env.NODE_ENV === "production") ? "/prod" : "/dev");
     instance.use(express.static(www));
-    Config.getConfig().expressStaticsVendors.forEach((item, index, array) => {
-        instance.use("/vendors", express.static(item.folder));
+    // locales
+    const esl = Config.getConfig().expressStaticsLocales;
+    instance.use(esl.path, express.static(esl.folder));
+    // vendors
+    const esv = Config.getConfig().expressStaticsVendors;
+    esv.forEach((vendor, index, array) => {
+        instance.use(vendor.path, express.static(vendor.folder));
     });
 }
