@@ -19,7 +19,7 @@
                      * @name fwkGetCurrentRoute
                      * @function
                      * @memberof app
-                     * @returns {String}
+                     * @returns {Object}
                      */
                     app.fwkGetCurrentRoute = () => {
                         return this._getCurrentRoute();
@@ -28,7 +28,7 @@
                      * @name fwkNavigate
                      * @function
                      * @memberof app
-                     * @param {String} location
+                     * @param {Object} location
                      * @param {Function} onComplete
                      * @param {Function} onAbort
                      */
@@ -106,13 +106,13 @@
                         return this._getLocale();
                     };
                     /**
-                     * @name fwkGetSetLocale
+                     * @name fwkSetLocale
                      * @function
                      * @memberof app
                      * @param {String} locale
                      * @returns {String}
                      */
-                    app.fwkGetSetLocale = (locale) => {
+                    app.fwkSetLocale = (locale) => {
                         this._setLocale(locale);
                     };
                 },
@@ -311,7 +311,7 @@
                             resolve(componentDescription);
                         } else {
                             const componentUrl = this._getComponentUrl(params);
-                            app.fwkLoadJs(componentUrl).then(() => {
+                            Fwk.manager.ResourceManager.loadJs(componentUrl).then(() => {
                                 app.fwkGetLogger(LoggerClassName).debug("Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
@@ -401,18 +401,8 @@
                     app.fwkCallService = (request) => {
                         return this._callService(request);
                     };
-                    /**
-                     * @name fwkLoadJs
-                     * @function
-                     * @memberof app
-                     * @param {String} url
-                     * @returns {Promise}
-                     */
-                    app.fwkLoadJs = (url) => {
-                        return this._loadJs(url);
-                    };
                 },
-                _loadJs: function (url) {
+                loadJs: function (url) {
                     return new Promise((resolve) => {
                         app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
                         const script = document.createElement("script");

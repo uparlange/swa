@@ -10,7 +10,7 @@
         },
         watch: {
             selectedLocale: function () {
-                app.fwkGetSetLocale(this.selectedLocale);
+                app.fwkSetLocale(this.selectedLocale);
             }
         },
         created: function () {
