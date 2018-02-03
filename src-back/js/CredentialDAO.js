@@ -11,7 +11,7 @@ const mockData = {
     login: "j.doe@lost.com",
     password: "$2a$10$aAT021Qzwenl3CvMyMGg3OSkWuiODkAMbeGLNurMaNpCtH2bqUDHO"
 };
-const db = PouchDB.getDatabase("db/credentials");
+const db = PouchDB.getDatabase("credentials");
 db.info().then((result) => {
     if (result.doc_count === 0) {
         db.put(mockData);

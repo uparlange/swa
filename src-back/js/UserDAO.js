@@ -7,7 +7,7 @@ const mockData = {
     firstName: "John",
     lastName: "Doe"
 };
-const db = PouchDB.getDatabase("db/users");
+const db = PouchDB.getDatabase("users");
 db.info().then((result) => {
     if (result.doc_count === 0) {
         db.put(mockData);

@@ -6,7 +6,7 @@ const mockData = [
     { userId: "jdoe", date: new Date().toISOString(), type: "BIRTHDAY", title: "Wife's birthday !", description: "" },
     { userId: "jdoe", date: new Date().toISOString(), type: "NOTE", title: "Go down the trash cans", description: "" }
 ];
-const db = PouchDB.getDatabase("db/events");
+const db = PouchDB.getDatabase("events");
 db.info().then((result) => {
     if (result.doc_count === 0) {
         db.createIndex({
