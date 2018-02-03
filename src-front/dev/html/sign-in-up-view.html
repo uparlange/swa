@@ -13,8 +13,11 @@
                 <v-btn color="primary" :disabled="!valid" @click="validate()">
                     {{$t('LABEL_SUBMIT')}}
                 </v-btn>
-                <v-btn v-if="showRegisterBtn" to="/register" color="primary">
+                <v-btn v-if="showRegisterBtn" to="/sign/up">
                     {{$t('LABEL_REGISTER')}}
+                </v-btn>
+                <v-btn v-if="showCancelBtn" to="/sign/in">
+                    {{$t('LABEL_CANCEL')}}
                 </v-btn>
             </v-card-actions>
         </v-card>

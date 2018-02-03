@@ -16,7 +16,7 @@
         },
         created: function () {
             app.fwkGetEventBus().on("FWK_AUTHENTICATION_NEEDED", () => {
-                app.fwkNavigate("/login");
+                app.fwkNavigate("/sign/in");
             });
             app.fwkGetEventBus().on("FWK_SECURITY_TOKEN_FILLED", (event) => {
                 if (event.token) {

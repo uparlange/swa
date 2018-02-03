@@ -11,12 +11,8 @@
             component: app.fwkUseRouteComponent({ id: "HomeView" }),
         },
         {
-            path: "/login",
-            component: app.fwkUseRouteComponent({ id: "LoginView", templateUrl: "html/sign-in-up-view.html" }),
-        },
-        {
-            path: "/register",
-            component: app.fwkUseRouteComponent({ id: "RegisterView", templateUrl: "html/sign-in-up-view.html" })
+            path: "/sign/:type",
+            component: app.fwkUseRouteComponent({ id: "SignInUpView" }),
         },
         {
             path: "/myspace",

@@ -9,13 +9,10 @@
         },
         created: function () {
             this._refreshBreadcrumb(app.fwkGetCurrentRoute().fullPath);
-            this._FWK_ROUTE_CHANGED_handler = (event) => {
-                this._refreshBreadcrumb(event.to);
-            };
-            app.fwkGetEventBus().on("FWK_ROUTE_CHANGED", this._FWK_ROUTE_CHANGED_handler);
         },
-        beforeDestroy() {
-            app.fwkGetEventBus().off("FWK_ROUTE_CHANGED", this._FWK_ROUTE_CHANGED_handler);
+        beforeRouteUpdate(to, from, next) {
+            this._refreshBreadcrumb(to.fullPath);
+            next();
         },
         methods: {
             _refreshBreadcrumb: function (path) {

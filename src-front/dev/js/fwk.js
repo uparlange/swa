@@ -59,11 +59,7 @@
                         }
                     });
                     this._router.afterEach((to, from) => {
-                        // dispatch event
-                        app.fwkGetEventBus().emit("FWK_ROUTE_CHANGED", {
-                            from: from.fullPath,
-                            to: to.fullPath
-                        });
+                        app.fwkGetLogger(LoggerClassName).debug("Router navigate from '" + from.fullPath + "' to '" + to.fullPath + "'");
                     });
                     app.fwkGetEventBus().on("FWK_AUTHENTICATION_NEEDED", (event) => {
                         this._requestedRouteBeforeLogin = event.to;
