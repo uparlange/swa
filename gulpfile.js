@@ -35,14 +35,11 @@ gulp.task('optimize-css', () => {
 });
 
 gulp.task('optimize-html', () => {
-    const streams = mergeStream();
-    streams.add(gulp.src(SRC_FRONT + '/dev/html/*.html').pipe(htmlclean()).pipe(gulp.dest(SRC_FRONT + '/prod/html')));
-    streams.add(gulp.src(SRC_FRONT + '/dev/index.html').pipe(htmlclean()).pipe(gulp.dest(SRC_FRONT + '/prod')));
-    return streams;
+    return gulp.src(SRC_FRONT + '/dev/html/*.html').pipe(htmlclean()).pipe(gulp.dest(SRC_FRONT + '/prod/html'));
 });
 
 gulp.task('optimize-images', () => {
-    return gulp.src(SRC_FRONT + '/dev/images/**/*.*').pipe(imagemin()).pipe(gulp.dest(SRC_FRONT + '/prod/images'))
+    return gulp.src(SRC_FRONT + '/dev/images/**/*.*').pipe(imagemin()).pipe(gulp.dest(SRC_FRONT + '/prod/images'));
 });
 
 gulp.task('optimize-js', (callback) => {

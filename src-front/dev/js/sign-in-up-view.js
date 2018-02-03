@@ -27,7 +27,7 @@
         },
         created: function () {
             this._init(app.fwkGetCurrentRoute().params.type);
-            if (window.location.search.indexOf("debug")) {
+            if (window.location.search.indexOf("debug") !== -1) {
                 this.login = "j.doe@lost.com";
                 this.password = "password";
             }
