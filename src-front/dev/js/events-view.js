@@ -5,9 +5,18 @@
         data: function () {
             return {
                 locale: app.fwkGetCurrentLocale(),
-                selectedDate: sessionStorage.getItem("EventsView_selectedDate") || new Date().toISOString(),
+                selectedDate: sessionStorage.getItem("EventsView_selectedDate") || new Date().toISOString().split("T")[0],
                 events: [],
-                modal: false
+                selectDateDialogVisible: false,
+                addUpdateEventDialogVisible: false,
+                valid: true,
+                currentEvent: {},
+                iconRules: [
+                    app.fwkGetFormUtils().requiredRule()
+                ],
+                titleRules: [
+                    app.fwkGetFormUtils().requiredRule()
+                ]
             }
         },
         created: function () {
@@ -15,28 +24,58 @@
         },
         watch: {
             selectedDate: function () {
-                this.modal = false;
+                this.selectDateDialogVisible = false;
                 this._refresh();
             }
         },
         methods: {
-            getIcon: function (type) {
-                let icon = null;
-                switch (type) {
-                    case "BIRTHDAY": icon = "card_giftcard"; break;
-                    default: icon = "note"; break;
+            add: function () {
+                this.currentEvent = {
+                    icon: "note",
+                    title: "",
+                    description: "",
+                    date: this._getCurrentDateTimeISOString()
+                };
+                this.addUpdateEventDialogVisible = true;
+            },
+            edit: function (event) {
+                this.currentEvent = event;
+                this.addUpdateEventDialogVisible = true;
+            },
+            save: function () {
+                if (this.$refs.form.validate()) {
+                    const request = this.$http.put("/services/events", this.currentEvent);
+                    app.fwkCallService(request).then((response) => {
+                        this.addUpdateEventDialogVisible = false;
+                        this._refresh();
+                    }, (response) => {
+                        // TODO manage
+                    });
                 }
-                return icon;
+            },
+            remove: function (event) {
+                const request = this.$http.delete("/services/events?id=" + event._id);
+                app.fwkCallService(request).then((response) => {
+                    this._refresh();
+                }, (response) => {
+                    // TODO manage
+                });
+            },
+            _getCurrentDateTimeISOString: function () {
+                const now = new Date();
+                const selectedDate = new Date(this.selectedDate);
+                selectedDate.setHours(now.getHours());
+                selectedDate.setMinutes(now.getMinutes());
+                selectedDate.setSeconds(now.getSeconds());
+                return selectedDate.toISOString();
             },
             _refresh: function () {
                 sessionStorage.setItem("EventsView_selectedDate", this.selectedDate);
                 const request = this.$http.get("/services/events?date=" + this.selectedDate);
                 app.fwkCallService(request).then((response) => {
-                    const events = response.body.data.events;
-                    if (events.length == 0) {
-                        events.push({ title: app.fwkGetLabel({ key: "LABEL_NOTHING_TO_NOTICE" }) })
-                    }
-                    this.events = events;
+                    this.events = response.body.data.events;
+                }, (response) => {
+                    // TODO manage
                 });
             }
         }

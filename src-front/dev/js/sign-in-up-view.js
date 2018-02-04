@@ -10,13 +10,13 @@
                 valid: true,
                 login: "",
                 loginRules: [
-                    (v) => !!v || app.fwkGetLabel({ key: "ERROR_FIELD_IS_REQUIRED" }),
-                    (v) => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(v) || app.fwkGetLabel({ key: "ERROR_FIELD_MUST_BE_VALID_EMAIL" })
+                    app.fwkGetFormUtils().requiredRule(),
+                    app.fwkGetFormUtils().emailRule()
                 ],
                 password: "",
                 passwordRules: [
-                    (v) => !!v || app.fwkGetLabel({ key: "ERROR_FIELD_IS_REQUIRED" }),
-                    (v) => v && v.length >= 8 || app.fwkGetLabel({ key: "ERROR_FIELD_HAS_MIN_LENGTH", values: { length: 8 } })
+                    app.fwkGetFormUtils().requiredRule(),
+                    app.fwkGetFormUtils().minLengthRule(8)
                 ],
                 message: {
                     visible: false,
@@ -47,18 +47,19 @@
                 }
             },
             _validateSignIn: function () {
-                const request = this.$http.post("/services/login", {
+                const request = this.$http.post("/services/users/login", {
                     login: this.login,
                     password: this.password
                 });
                 app.fwkCallService(request).then((response) => {
                     app.fwkSetAuthorizationToken(response.body.data.token);
+                    app.fwkGetEventBus().emit("PROFILE_CHANGED", response.body.data.user);
                 }, (response) => {
                     this._showMessage(response.body.message);
                 });
             },
             _validateSignUp: function () {
-                const request = this.$http.post("/services/register", {
+                const request = this.$http.post("/services/users/register", {
                     login: this.login,
                     password: this.password
                 });

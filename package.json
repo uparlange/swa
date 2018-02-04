@@ -1,6 +1,6 @@
 {
   "name": "swa",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -27,8 +27,7 @@
     "merge-stream": "1.0.1",
     "passport": "0.4.0",
     "passport-jwt": "3.0.1",
-    "pouchdb-adapter-memory": "6.4.3",
-    "pouchdb-adapter-node-websql": "^6.4.3",
+    "pouchdb-adapter-node-websql": "6.4.3",
     "pouchdb-find": "6.4.3",
     "pouchdb-node": "6.4.3",
     "pug": "2.0.0-rc.4",

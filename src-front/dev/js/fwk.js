@@ -150,6 +150,8 @@
                         app.fwkCallService(request).then((response) => {
                             this._i18n.setLocaleMessage(locale, response.body);
                             resolve();
+                        }, (response) => {
+                            // TODO manage
                         });
                     });
                 }
@@ -240,7 +242,7 @@
                      */
                     app.fwkUseComponent = (params) => {
                         app.fwkGetLogger(LoggerClassName).debug("Use component '" + params.id + "'");
-                        Vue.component(Fwk.util.StringUtils.dasherize(params.id), this._useComponent(params));
+                        Vue.component(app.fwkGetStringUtils().dasherize(params.id), this._useComponent(params));
                     };
                     // filters
                     /**
@@ -272,7 +274,7 @@
                         if (this._directiveCache[params.id]) {
                             app.fwkGetLogger(LoggerClassName).warn("Directive '" + params.id + "' already registered... definition's crushed !");
                         }
-                        Vue.directive(Fwk.util.StringUtils.dasherize(params.id), description);
+                        Vue.directive(app.fwkGetStringUtils().dasherize(params.id), description);
                         this._directiveCache[params.id] = true;
                     };
                     // route components
@@ -315,6 +317,8 @@
                                 app.fwkGetLogger(LoggerClassName).debug("Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
+                            }, (response) => {
+                                // TODO manage
                             });
                         }
                     });
@@ -331,6 +335,8 @@
                                 app.fwkGetLogger(LoggerClassName).debug("Template file '" + templateUrl + "' loaded");
                                 templateDescription = this._setTemplateDescription(templateUrl, response.bodyText);
                                 resolve(templateDescription);
+                            }, (response) => {
+                                // TODO manage
                             });
                         }
                     });
@@ -383,10 +389,10 @@
                     return this._templateCache[url];
                 },
                 _getComponentUrl: function (params) {
-                    return params.componentUrl || ("js/" + Fwk.util.StringUtils.dasherize(params.id) + ".js");
+                    return params.componentUrl || ("js/" + app.fwkGetStringUtils().dasherize(params.id) + ".js");
                 },
                 _getTemplateUrl: function (params) {
-                    return params.templateUrl || ("html/" + Fwk.util.StringUtils.dasherize(params.id) + ".html");
+                    return params.templateUrl || ("html/" + app.fwkGetStringUtils().dasherize(params.id) + ".html");
                 }
             },
             ResourceManager: {
@@ -480,12 +486,57 @@
                         }
                     }
                 }
-            }
-        },
-        util: {
-            StringUtils: {
-                dasherize: function (str) {
-                    return str.trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase().substring(1);
+            },
+            UtilManager: {
+                init: function () {
+                    /**
+                     * @name fwkGetStringUtils
+                     * @function
+                     * @memberof app
+                     * @returns {Object}
+                     */
+                    app.fwkGetStringUtils = () => {
+                        return this.StringUtils;
+                    };
+                    /**
+                     * @name fwkGetFormUtils
+                     * @function
+                     * @memberof app
+                     * @returns {Object}
+                     */
+                    app.fwkGetFormUtils = () => {
+                        return this.FormUtils;
+                    };
+                },
+                StringUtils: {
+                    dasherize: function (str) {
+                        return str.trim().replace(/([A-Z])/g, '-$1').replace(/[-_\s]+/g, '-').toLowerCase().substring(1);
+                    },
+                    zerofill: function (value, length) {
+                        if (!value) return "";
+                        let v = "" + value;
+                        while (v.length < length) {
+                            v = "0" + v;
+                        }
+                        return v;
+                    }
+                },
+                FormUtils: {
+                    requiredRule: function () {
+                        return function (value) {
+                            return !!value || app.fwkGetLabel({ key: "ERROR_FIELD_IS_REQUIRED" });
+                        }
+                    },
+                    emailRule: function () {
+                        return function (value) {
+                            return /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(.\w{2,3})+$/.test(value) || app.fwkGetLabel({ key: "ERROR_FIELD_MUST_BE_VALID_EMAIL" });
+                        }
+                    },
+                    minLengthRule: function (length) {
+                        return function (value) {
+                            return value && value.length >= length || app.fwkGetLabel({ key: "ERROR_FIELD_HAS_MIN_LENGTH", values: { length: length } })
+                        }
+                    }
                 }
             }
         }

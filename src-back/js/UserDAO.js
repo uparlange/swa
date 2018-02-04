@@ -2,34 +2,53 @@
 const PouchDB = require(__dirname + "/PouchDB");
 
 // body
-const mockData = {
-    _id: "jdoe",
-    firstName: "John",
-    lastName: "Doe"
-};
 const db = PouchDB.getDatabase("users");
-db.info().then((result) => {
-    if (result.doc_count === 0) {
-        db.put(mockData);
+
+const getInfos = function () {
+    return new Promise(function (resolve, reject) {
+        db.info().then(function (result) {
+            resolve(result);
+        }).catch(function (err) {
+            reject({ message: "TECHNICAL_ERROR" });
+        });
+    });
+};
+
+const getById = function (id) {
+    return new Promise(function (resolve, reject) {
+        db.get(id).then(function (res) {
+            resolve(res);
+        }).catch(function (err) {
+            reject({ message: "TECHNICAL_ERROR" });
+        });
+    });
+};
+
+const update = function (user) {
+    return new Promise(function (resolve, reject) {
+        db.put(user).then(function (res) {
+            getById(res.id).then(function (res) {
+                resolve(res);
+            }).catch(function (err) {
+                reject({ message: "TECHNICAL_ERROR" });
+            });
+        }).catch(function (err) {
+            reject({ message: "TECHNICAL_ERROR" });
+        });
+    });
+};
+
+getInfos().then(function (infos) {
+    if (infos.doc_count === 0) {
+        db.put({
+            _id: "jdoe",
+            firstName: "John",
+            lastName: "Doe"
+        })
     }
 });
 
 // exported methods
-exports.update = function (user) {
-    return new Promise((resolve, reject) => {
-        db.put(user).then((res) => {
-            resolve(res);
-        }).catch((err) => {
-            reject({ message: "TECHNICAL_ERROR" });
-        });
-    });
-};
-exports.findById = function (id) {
-    return new Promise((resolve, reject) => {
-        db.get(id).then((res) => {
-            resolve(res);
-        }).catch((err) => {
-            reject({ message: "TECHNICAL_ERROR" });
-        });
-    });
-};
+exports.getInfos = getInfos;
+exports.update = update;
+exports.getById = getById;

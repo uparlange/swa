@@ -31,7 +31,7 @@ exports.start = function () {
         // init services
         ExpressServices.init(instance);
         // start server
-        instance.listen((process.env.PORT || Config.getConfig().expressPort), () => {
+        instance.listen((process.env.PORT || Config.getConfig().expressPort), function() {
 
         });
     }

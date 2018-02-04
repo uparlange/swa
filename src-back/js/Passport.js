@@ -13,7 +13,7 @@ const jwtOptions = {
     secretOrKey: passportSecretOrKey
 };
 const strategy = new passportJwt.Strategy(jwtOptions, function (payload, next) {
-    UserDAO.findById(payload.id).then((user) => {
+    UserDAO.getById(payload.id).then(function (user) {
         if (user) {
             next(null, user);
         } else {

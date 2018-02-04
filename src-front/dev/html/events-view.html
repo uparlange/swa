@@ -1,25 +1,66 @@
 <div>
     <v-card>
         <v-card-text>
-            <v-dialog v-model="modal" lazy full-width width="330px">
-                <v-text-field slot="activator" v-model="selectedDate" prepend-icon="event" readonly></v-text-field>
-                <v-date-picker v-model="selectedDate" scrollable></v-date-picker>
-            </v-dialog>
+            <v-layout row wrap>
+                <v-flex xs6>
+                    <v-dialog v-model="selectDateDialogVisible" lazy full-width width="330px">
+                        <v-text-field slot="activator" v-model="selectedDate" prepend-icon="event" readonly></v-text-field>
+                        <v-date-picker :first-day-of-week="1" :locale="locale" v-model="selectedDate" scrollable></v-date-picker>
+                    </v-dialog>
+                </v-flex>
+                <v-flex xs6>
+                    <v-btn @click="add()" color="primary">{{$t("LABEL_ADD")}}</v-btn>
+                </v-flex>
+            </v-layout>
         </v-card-text>
     </v-card>
     <v-card class="mt-3">
-        <v-list two-line>
-            <template v-for="(event, index) in events" :key="event._id">
-                <v-divider v-if="index > 0" inset="true"></v-divider>
-                <v-list-tile avatar>
-                    <v-list-tile-avatar>
-                        <v-icon>{{getIcon(event.type)}}</v-icon>
-                    </v-list-tile-avatar>
-                    <v-list-tile-content>
-                        <v-list-tile-title>{{event.title}}</v-list-tile-title>
-                        <v-list-tile-sub-title>{{event.description || "..."}}</v-list-tile-sub-title>
-                    </v-list-tile-content>
-                </v-list-tile>
-        </v-list>
+        <div v-if="events.length === 0">
+            <v-card-text>
+                {{$t("LABEL_NO_DATA")}}
+            </v-card-text>
+        </div>
+        <div v-else>
+            <v-list two-line>
+                <template v-for="(event, index) in events" :key="event._id">
+                    <v-divider v-if="index > 0" inset="true"></v-divider>
+                    <v-list-tile avatar @click="">
+                        <v-list-tile-avatar @click="edit(event)">
+                            <v-icon>{{event.icon}}</v-icon>
+                        </v-list-tile-avatar>
+                        <v-list-tile-content @click="edit(event)">
+                            <v-list-tile-title>{{event.title}}</v-list-tile-title>
+                            <v-list-tile-sub-title v-if="event.description != null">{{event.description}}</v-list-tile-sub-title>
+                        </v-list-tile-content>
+                        <v-list-tile-action>
+                            <v-btn icon ripple @click="remove(event)">
+                                <v-icon color="red">delete</v-icon>
+                            </v-btn>
+                        </v-list-tile-action>
+                    </v-list-tile>
+            </v-list>
+        </div>
     </v-card>
+    <v-dialog v-model="addUpdateEventDialogVisible" fullscreen transition="dialog-bottom-transition" :overlay=false scrollable>
+        <v-card>
+            <v-toolbar style="flex: 0 0 auto;" dark class="primary">
+                <v-btn icon dark @click="addUpdateEventDialogVisible = false">
+                    <v-icon>close</v-icon>
+                </v-btn>
+                <v-toolbar-title>{{$t('LABEL_ADD')}} / {{$t('LABEL_UPDATE')}}</v-toolbar-title>
+                <v-spacer></v-spacer>
+                <v-btn icon dark @click="save()">
+                    <v-icon>save</v-icon>
+                </v-btn>
+            </v-toolbar>
+            <v-card-text>
+                <v-form v-model="valid" ref="form">
+                    <v-text-field :append-icon="currentEvent.icon" :label="$t('LABEL_ICON')" v-model="currentEvent.icon" required :rules="iconRules"></v-text-field>
+                    <v-text-field :label="$t('LABEL_TITLE')" v-model="currentEvent.title" required :rules="titleRules"></v-text-field>
+                    <v-text-field textarea :label="$t('LABEL_DESCRIPTION')" v-model="currentEvent.description"></v-text-field>
+                </v-form>
+            </v-card-text>
+            <div style="flex: 1 1 auto;"></div>
+        </v-card>
+    </v-dialog>
 </div>

@@ -15,30 +15,30 @@
             }
         },
         created: function () {
+            // manage secure route and session timeout
             app.fwkGetEventBus().on("FWK_AUTHENTICATION_NEEDED", () => {
                 app.fwkNavigate("/sign/in");
             });
+            // manage logout
             app.fwkGetEventBus().on("FWK_SECURITY_TOKEN_FILLED", (event) => {
-                if (event.token) {
-                    // TODO manage when no pre route asked
-                    const request = this.$http.get("/services/user");
-                    app.fwkCallService(request).then((response) => {
-                        const user = response.body.data.user;
-                        this._refreshProfileMenuLabel(user.firstName + " " + user.lastName);
-                    }, () => {
-                        // TODO manager error
-                    });
-                } else {
+                if (!event.token) {
                     this._refreshProfileMenuLabel();
                     app.fwkNavigate("/home");
                 }
             });
+            // manage profile change : after signin or update in profile view
+            app.fwkGetEventBus().on("PROFILE_CHANGED", (user) => {
+                this._refreshProfileMenuLabel(user.firstName + " " + user.lastName);
+            });
+            // manage resource loading start
             app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_START", () => {
                 this.loading = true;
             });
+            // manage resource loading stop
             app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_STOP", () => {
                 this.loading = false;
             });
+            // manage application cache (manifest)
             app.fwkGetEventBus().on("FWK_APPLICATION_UPDATE_READY", () => {
                 const label = app.fwkGetLabel({ key: "LABEL_NEW_VERSION_AVAILABLE" });
                 app.fwkGetLogger(componentId).debug(label);

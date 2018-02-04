@@ -14,7 +14,7 @@ exports.init = function (instance) {
     instance.use(esl.path, express.static(esl.folder));
     // vendors
     const esv = Config.getConfig().expressStaticsVendors;
-    esv.forEach((vendor, index, array) => {
+    esv.forEach(function (vendor, index, array) {
         instance.use(vendor.path, express.static(vendor.folder));
     });
 }
