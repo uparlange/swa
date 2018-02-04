@@ -45,19 +45,19 @@
             save: function () {
                 if (this.$refs.form.validate()) {
                     const request = this.$http.put("/services/events", this.currentEvent);
-                    app.fwkCallService(request).then((response) => {
+                    app.fwkCallService(request).then(() => {
                         this.addUpdateEventDialogVisible = false;
                         this._refresh();
-                    }, (response) => {
+                    }, () => {
                         // TODO manage
                     });
                 }
             },
             remove: function (event) {
                 const request = this.$http.delete("/services/events?id=" + event._id);
-                app.fwkCallService(request).then((response) => {
+                app.fwkCallService(request).then(() => {
                     this._refresh();
-                }, (response) => {
+                }, () => {
                     // TODO manage
                 });
             },
@@ -74,7 +74,7 @@
                 const request = this.$http.get("/services/events?date=" + this.selectedDate);
                 app.fwkCallService(request).then((response) => {
                     this.events = response.body.data.events;
-                }, (response) => {
+                }, () => {
                     // TODO manage
                 });
             }

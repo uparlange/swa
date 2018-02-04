@@ -150,7 +150,7 @@
                         app.fwkCallService(request).then((response) => {
                             this._i18n.setLocaleMessage(locale, response.body);
                             resolve();
-                        }, (response) => {
+                        }, () => {
                             // TODO manage
                         });
                     });
@@ -317,7 +317,7 @@
                                 app.fwkGetLogger(LoggerClassName).debug("Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
-                            }, (response) => {
+                            }, () => {
                                 // TODO manage
                             });
                         }
@@ -335,7 +335,7 @@
                                 app.fwkGetLogger(LoggerClassName).debug("Template file '" + templateUrl + "' loaded");
                                 templateDescription = this._setTemplateDescription(templateUrl, response.bodyText);
                                 resolve(templateDescription);
-                            }, (response) => {
+                            }, () => {
                                 // TODO manage
                             });
                         }

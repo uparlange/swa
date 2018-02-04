@@ -15,7 +15,7 @@
             const request = this.$http.get("/services/users/current");
             app.fwkCallService(request).then((response) => {
                 this.profile = response.body.data.user;
-            }, (response) => {
+            }, () => {
                 // TODO manage
             });
         },
@@ -29,7 +29,7 @@
                     app.fwkCallService(request).then((response) => {
                         this.profile = response.body.data.user;
                         app.fwkGetEventBus().emit("PROFILE_CHANGED", response.body.data.user);
-                    }, (response) => {
+                    }, () => {
                         // TODO manage
                     });
                 }

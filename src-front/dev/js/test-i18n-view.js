@@ -17,7 +17,7 @@
             const request = this.$http.get("/services/locales");
             app.fwkCallService(request).then((response) => {
                 this.locales = response.body.data.locales;
-            }, (response) => {
+            }, () => {
                 // TODO manage error
             });
         }
