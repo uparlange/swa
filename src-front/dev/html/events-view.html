@@ -3,7 +3,7 @@
         <v-card-text>
             <v-layout row wrap>
                 <v-flex xs6>
-                    <v-dialog v-model="selectDateDialogVisible" lazy full-width width="330px">
+                    <v-dialog v-model="selectDateDialogVisible" lazy full-width width="290px">
                         <v-text-field slot="activator" v-model="selectedDate" prepend-icon="event" readonly></v-text-field>
                         <v-date-picker :first-day-of-week="1" :locale="locale" v-model="selectedDate" scrollable></v-date-picker>
                     </v-dialog>

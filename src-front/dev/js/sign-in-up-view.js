@@ -8,12 +8,12 @@
                 showCancelBtn: null,
                 title: null,
                 valid: true,
-                login: "",
+                login: "j.doe@lost.com",
                 loginRules: [
                     app.fwkGetFormUtils().requiredRule(),
                     app.fwkGetFormUtils().emailRule()
                 ],
-                password: "",
+                password: "password",
                 passwordRules: [
                     app.fwkGetFormUtils().requiredRule(),
                     app.fwkGetFormUtils().minLengthRule(8)
@@ -27,10 +27,6 @@
         },
         created: function () {
             this._init(app.fwkGetCurrentRoute().params.type);
-            if (window.location.search.indexOf("debug") !== -1) {
-                this.login = "j.doe@lost.com";
-                this.password = "password";
-            }
         },
         beforeRouteUpdate(to, from, next) {
             this._init(to.params.type);

@@ -1,6 +1,6 @@
 {
+    "expressPort": "8080",
     "passportSecretOrKey": "mySuperSecretKey",
-    "expressPort": 8080,
     "expressStaticsLocales": {
         "folder": "src-back/data/i18n",
         "path": "/data/i18n",

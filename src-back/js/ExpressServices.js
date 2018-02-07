@@ -9,12 +9,12 @@ const UserDAO = require(__dirname + "/UserDAO");
 const EventDAO = require(__dirname + "/EventDAO");
 const Config = require(__dirname + "/Config");
 
-// exported methods
-exports.init = function (instance) {
+// body
+const init = function (instance) {
     // locales
     instance.get("/services/locales", function (req, res) {
         const locales = [];
-        Config.getConfig().expressStaticsLocales.files.forEach(function (file) {
+        Config.getConfig().getExpressStaticsLocales().files.forEach(function (file) {
             locales.push(file.replace(".json", ""));
         });
         res.json({
@@ -43,7 +43,7 @@ exports.init = function (instance) {
                 id: credential._id,
                 exp: Math.floor(Date.now() / 1000) + (60 * 60) // 1 hour
             };
-            const token = jwt.sign(payload, Passport.SECRET_OR_KEY);
+            const token = jwt.sign(payload, Config.getConfig().getPassportSecretOrKey());
             UserDAO.getById(payload.id).then(function (user) {
                 res.json({
                     message: "OK",
@@ -135,4 +135,7 @@ exports.init = function (instance) {
             res.status(400).json(response);
         });
     });
-}
+};
+
+// exported methods
+exports.init = init;

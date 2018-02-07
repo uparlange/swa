@@ -7,10 +7,9 @@ const UserDAO = require(__dirname + "/UserDAO");
 const Config = require(__dirname + "/Config");
 
 // body
-const passportSecretOrKey = Config.getConfig().passportSecretOrKey;
 const jwtOptions = {
     jwtFromRequest: passportJwt.ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: passportSecretOrKey
+    secretOrKey: Config.getConfig().getPassportSecretOrKey()
 };
 const strategy = new passportJwt.Strategy(jwtOptions, function (payload, next) {
     UserDAO.getById(payload.id).then(function (user) {
@@ -23,11 +22,12 @@ const strategy = new passportJwt.Strategy(jwtOptions, function (payload, next) {
 });
 passport.use(strategy);
 
+const getInstance = function () {
+    return passport;
+};
+
 // exported variables
-exports.SECRET_OR_KEY = passportSecretOrKey;
 exports.AUTHENTICATED_SERVICE = passport.authenticate("jwt", { session: false });
 
 // exported methods
-exports.getInstance = function () {
-    return passport;
-};
+exports.getInstance = getInstance;

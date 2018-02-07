@@ -73,12 +73,12 @@ gulp.task('generate-manifest', (callback) => {
     // application files
     readDir(baseDir);
     // locales
-    const esl = Config.getConfig().expressStaticsLocales;
+    const esl = Config.getConfig().getExpressStaticsLocales();
     esl.files.forEach((file, index, array) => {
         content += esl.path.substring(1) + '/' + file + '\n';
     });
     // vendor files
-    const esv = Config.getConfig().expressStaticsVendors;
+    const esv = Config.getConfig().getExpressStaticsVendors();
     esv.forEach((vendor, index, array) => {
         vendor.files.forEach((file, index, array) => {
             content += vendor.path.substring(1) + '/' + file + '\n';

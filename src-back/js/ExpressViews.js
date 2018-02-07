@@ -2,16 +2,20 @@
 const Config = require(__dirname + "/Config");
 const pkg = require(__dirname + "/../../package.json");
 
-// exported methods
-exports.init = function (instance) {
+// body
+const init = function (instance) {
     // init
-    instance.set("views", Config.getConfig().srcFrontPath + "/views");
-    instance.set("view engine", "pug");
+    const conf = Config.getConfig().getExpressViewsConf();
+    instance.set("views", conf.folder);
+    instance.set("view engine", conf.engine);
     // index
     instance.get("/", function (req, res) {
         res.render("index", {
             title: pkg.name.toUpperCase(),
-            vendors: Config.getConfig().expressStaticsVendors
+            vendors: Config.getConfig().getExpressStaticsVendors()
         });
     });
-}
+};
+
+// exported methods
+exports.init = init;

@@ -13,8 +13,7 @@ const Config = require(__dirname + "/Config");
 // body
 let instance = null;
 
-// exported methods
-exports.start = function () {
+const start = function () {
     if (instance === null) {
         // init express
         instance = express();
@@ -31,8 +30,11 @@ exports.start = function () {
         // init services
         ExpressServices.init(instance);
         // start server
-        instance.listen((process.env.PORT || Config.getConfig().expressPort), function() {
+        instance.listen(Config.getConfig().getExpressPort(), function () {
 
         });
     }
 };
+
+// exported methods
+exports.start = start;
