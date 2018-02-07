@@ -1,4 +1,6 @@
 {
+    "LABEL_NO_CONNECTION": "No connection !",
+    "LABEL_CONNECTED": "Connected !",
     "LABEL_ICON": "Icon",
     "LABEL_TITLE": "Title",
     "LABEL_DESCRIPTION": "Description",

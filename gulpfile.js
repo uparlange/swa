@@ -54,15 +54,13 @@ gulp.task('generate-manifest', (callback) => {
     const baseDir = SRC_FRONT + '/dev';
     const readDir = (dir) => {
         fs.readdirSync(dir).forEach((item, index, array) => {
-            if (item !== '.' && item !== '..') {
-                const path = dir + '/' + item;
-                const stats = fs.statSync(path);
-                if (stats.isDirectory()) {
-                    readDir(path);
-                }
-                else {
-                    content += path.replace(baseDir + '/', '') + '\n';
-                }
+            const path = dir + '/' + item;
+            const stats = fs.statSync(path);
+            if (stats.isDirectory()) {
+                readDir(path);
+            }
+            else {
+                content += path.replace(baseDir + '/', '') + '\n';
             }
         });
     };

@@ -7,6 +7,14 @@
             return {
                 drawer: null,
                 loading: false,
+                snackbar: {
+                    visible: false,
+                    y: "bottom",
+                    x: null,
+                    mode: "",
+                    timeout: 3000,
+                    text: ""
+                },
                 menus: [
                     { labelKey: "LABEL_HOME", icon: "home", link: "/home" },
                     { labelKey: "LABEL_EVENTS", icon: "event", link: "/myspace/events" },
@@ -38,16 +46,27 @@
             app.fwkGetEventBus().on("FWK_RESOURCE_LOADING_STOP", () => {
                 this.loading = false;
             });
+            // manage connection status
+            app.fwkGetEventBus().on("FWK_APPLICATION_ONLINE_STATUS_CHANGED", (event) => {
+                const label = app.fwkGetLabel({ key: event.online ? "LABEL_CONNECTED" : "LABEL_NO_CONNECTION" });
+                this._showSnackbar(label);
+            });
             // manage application cache (manifest)
             app.fwkGetEventBus().on("FWK_APPLICATION_UPDATE_READY", () => {
                 const label = app.fwkGetLabel({ key: "LABEL_NEW_VERSION_AVAILABLE" });
-                app.fwkGetLogger(componentId).debug(label);
+                if (confirm(label)) {
+                    window.location.reload();
+                }
             });
             this._refreshProfileMenuLabel();
         },
         methods: {
             _refreshProfileMenuLabel: function (label) {
                 this.menus[2].label = label || "Profile";
+            },
+            _showSnackbar: function (text) {
+                this.snackbar.text = text;
+                this.snackbar.visible = true;
             }
         }
     });

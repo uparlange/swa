@@ -7,7 +7,7 @@
             <v-form v-model="valid" ref="form">
                 <v-text-field @keyup.enter="validate()" :label="$t('LABEL_FIRST_NAME')" :rules="rules" v-model="profile.firstName" required></v-text-field>
                 <v-text-field @keyup.enter="validate()" :label="$t('LABEL_LAST_NAME')" :rules="rules" v-model="profile.lastName" required></v-text-field>
-                <v-btn color="primary" :disabled="!valid" @click="validate()">
+                <v-btn color="primary" :disabled="!valid || !hasChanges()" @click="validate()">
                     {{$t('LABEL_UPDATE')}}
                 </v-btn>
             </v-form>

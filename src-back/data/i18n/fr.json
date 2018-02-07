@@ -1,4 +1,6 @@
 {
+    "LABEL_NO_CONNECTION": "Hors connexion !",
+    "LABEL_CONNECTED": "Connecté !",
     "LABEL_ICON": "Icone",
     "LABEL_TITLE": "Titre",
     "LABEL_DESCRIPTION": "Description",
