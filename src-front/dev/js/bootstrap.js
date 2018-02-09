@@ -56,6 +56,10 @@
                 {
                     path: "i18n",
                     component: app.fwkUseRouteComponent({ id: "TestI18nView" })
+                },
+                {
+                    path: "ws",
+                    component: app.fwkUseRouteComponent({ id: "TestWsView" })
                 }
             ]
         }

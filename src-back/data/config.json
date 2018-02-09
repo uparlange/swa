@@ -45,6 +45,13 @@
                 "vuetify.min.css",
                 "vuetify.min.js"
             ]
+        },
+        {
+            "folder": "node_modules/socket.io-client/dist",
+            "path": "/vendors",
+            "files": [
+                "socket.io.js"
+            ]
         }
     ]
 }

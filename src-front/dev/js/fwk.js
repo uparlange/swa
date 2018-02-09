@@ -1,13 +1,27 @@
 "use strict";
 
+/**
+ * @namespace app
+ */
 (function (app) {
-    /**
-     * @namespace app
-     */
+    // correct eslint error 'Vue' is not defined
     const Vue = window.Vue;
+    // correct eslint error 'VueRouter' is not defined
     const VueRouter = window.VueRouter;
+    // correct eslint error 'VueI18n' is not defined
     const VueI18n = window.VueI18n;
-    const LoggerClassName = "Fwk";
+    // correct eslint error 'io' is not defined
+    const io = window.io;
+    // attributes
+    const loggerClassName = "Fwk";
+    const commonMixins = [];
+    // methods
+    const callHook = function (vm, hook, data) {
+        if (vm.$options[hook]) {
+            vm.$options[hook].call(vm, data);
+        }
+    };
+    // Fwk
     const Fwk = {
         manager: {
             RouterManager: {
@@ -59,7 +73,7 @@
                         }
                     });
                     this._router.afterEach((to, from) => {
-                        app.fwkGetLogger(LoggerClassName).debug("Router navigate from '" + from.fullPath + "' to '" + to.fullPath + "'");
+                        app.fwkGetLogger(loggerClassName).debug("Router navigate from '" + from.fullPath + "' to '" + to.fullPath + "'");
                     });
                     app.fwkGetEventBus().on("FWK_AUTHENTICATION_NEEDED", (event) => {
                         this._requestedRouteBeforeLogin = event.to;
@@ -144,14 +158,15 @@
                     document.querySelector("html").setAttribute("lang", locale);
                 },
                 _initLocale: function (locale) {
-                    return new Promise((resolve) => {
+                    return new Promise((resolve, reject) => {
                         const localeFileUrl = "data/i18n/" + locale + ".json";
                         const request = Vue.http.get(localeFileUrl);
                         app.fwkCallService(request).then((response) => {
                             this._i18n.setLocaleMessage(locale, response.body);
                             resolve();
-                        }, () => {
+                        }, (response) => {
                             // TODO manage
+                            reject(response);
                         });
                     });
                 }
@@ -202,7 +217,7 @@
                     };
                 },
                 emit: function (eventName, data) {
-                    app.fwkGetLogger(LoggerClassName).debug("EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
+                    app.fwkGetLogger(loggerClassName).debug("EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
                     this._vue.$emit(eventName, data);
                 },
                 on: function (eventName, callback) {
@@ -228,7 +243,7 @@
                      * @param {Object} description
                      */
                     app.fwkDefineComponent = (params, description) => {
-                        app.fwkGetLogger(LoggerClassName).debug("Define component '" + params.id + "'");
+                        app.fwkGetLogger(loggerClassName).debug("Define component '" + params.id + "'");
                         this._defineComponent(params.id, description);
                     };
                     /**
@@ -241,7 +256,7 @@
                      * @param {String} [params.templateUrl]
                      */
                     app.fwkUseComponent = (params) => {
-                        app.fwkGetLogger(LoggerClassName).debug("Use component '" + params.id + "'");
+                        app.fwkGetLogger(loggerClassName).debug("Use component '" + params.id + "'");
                         Vue.component(app.fwkGetStringUtils().dasherize(params.id), this._useComponent(params));
                     };
                     // filters
@@ -253,9 +268,9 @@
                      * @param {function} callback
                      */
                     app.fwkDefineFilter = (name, callback) => {
-                        app.fwkGetLogger(LoggerClassName).debug("Define filter '" + name + "'");
+                        app.fwkGetLogger(loggerClassName).debug("Define filter '" + name + "'");
                         if (this._filterCache[name]) {
-                            app.fwkGetLogger(LoggerClassName).warn("Filter '" + name + "' already registered... definition's crushed !");
+                            app.fwkGetLogger(loggerClassName).warn("Filter '" + name + "' already registered... definition's crushed !");
                         }
                         Vue.filter(name, callback);
                         this._filterCache[name] = true;
@@ -270,9 +285,9 @@
                      * @param {Object} description
                      */
                     app.fwkDefineDirective = (params, description) => {
-                        app.fwkGetLogger(LoggerClassName).debug("Define directive '" + params.id + "'");
+                        app.fwkGetLogger(loggerClassName).debug("Define directive '" + params.id + "'");
                         if (this._directiveCache[params.id]) {
-                            app.fwkGetLogger(LoggerClassName).warn("Directive '" + params.id + "' already registered... definition's crushed !");
+                            app.fwkGetLogger(loggerClassName).warn("Directive '" + params.id + "' already registered... definition's crushed !");
                         }
                         Vue.directive(app.fwkGetStringUtils().dasherize(params.id), description);
                         this._directiveCache[params.id] = true;
@@ -288,7 +303,7 @@
                      * @param {String} [params.templateUrl]
                      */
                     app.fwkUseRouteComponent = (params) => {
-                        app.fwkGetLogger(LoggerClassName).debug("Use route component '" + params.id + "'");
+                        app.fwkGetLogger(loggerClassName).debug("Use route component '" + params.id + "'");
                         return this._useComponent(params);
                     };
                     // application
@@ -302,7 +317,7 @@
                      * @param {String} [params.locale]
                      */
                     app.fwkBootstrapComponent = (params) => {
-                        app.fwkGetLogger(LoggerClassName).debug("Bootstrap component '" + params.id + "'");
+                        app.fwkGetLogger(loggerClassName).debug("Bootstrap component '" + params.id + "'");
                         this._bootstrapComponent(params);
                     };
                 },
@@ -314,11 +329,11 @@
                         } else {
                             const componentUrl = this._getComponentUrl(params);
                             Fwk.manager.ResourceManager.loadJs(componentUrl).then(() => {
-                                app.fwkGetLogger(LoggerClassName).debug("Component file '" + componentUrl + "' loaded");
+                                app.fwkGetLogger(loggerClassName).debug("Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
                             }, () => {
-                                // TODO manage
+                                resolve(null);
                             });
                         }
                     });
@@ -332,11 +347,11 @@
                         } else {
                             const request = Vue.http.get(templateUrl);
                             app.fwkCallService(request).then((response) => {
-                                app.fwkGetLogger(LoggerClassName).debug("Template file '" + templateUrl + "' loaded");
+                                app.fwkGetLogger(loggerClassName).debug("Template file '" + templateUrl + "' loaded");
                                 templateDescription = this._setTemplateDescription(templateUrl, response.bodyText);
                                 resolve(templateDescription);
                             }, () => {
-                                // TODO manage
+                                resolve(null);
                             });
                         }
                     });
@@ -353,8 +368,13 @@
                                 } else {
                                     // load html
                                     this._loadTemplate(params).then((templateDescription) => {
-                                        componentDescription.template = templateDescription;
-                                        resolve(componentDescription);
+                                        if (!componentDescription) {
+                                            reject(params.id);
+                                        } else {
+                                            componentDescription.template = templateDescription;
+                                            componentDescription.mixins = commonMixins;
+                                            resolve(componentDescription);
+                                        }
                                     });
                                 }
                             }
@@ -409,12 +429,16 @@
                     };
                 },
                 loadJs: function (url) {
-                    return new Promise((resolve) => {
+                    return new Promise((resolve, reject) => {
                         app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
                         const script = document.createElement("script");
                         script.onload = () => {
                             app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
                             resolve();
+                        };
+                        script.onerror = () => {
+                            // TODO manage
+                            reject();
                         };
                         document.head.appendChild(script);
                         script.src = url;
@@ -538,9 +562,69 @@
                         }
                     }
                 }
+            },
+            SocketManager: {
+                init: function () {
+                    const events = [
+                        { name: "FWK_WS_CLIENT_ADDED", hook: "afterSocketClientAdded" },
+                        { name: "FWK_WS_CLIENT_REMOVED", hook: "afterSocketClientRemoved" },
+                    ];
+                    commonMixins.push({
+                        beforeCreate: function () {
+                            events.forEach((event) => {
+                                const eventHandler = "_" + event.name + "handler";
+                                this[eventHandler] = (data) => {
+                                    if (event.hook) {
+                                        callHook(this, event.hook, data);
+                                    }
+                                };
+                                app.fwkGetEventBus().on(event.name, this[eventHandler]);
+                            });
+                        },
+                        beforeDestroy: function () {
+                            events.forEach((event) => {
+                                const eventHandler = "_" + event.name + "handler";
+                                app.fwkGetEventBus().off(event.name, this[eventHandler]);
+                            });
+                        }
+                    });
+                    Vue.use({
+                        install: function (Vue) {
+                            Vue.prototype.$socket = {
+                                _socket: null,
+                                isConnected: function () {
+                                    return !!this._socket;
+                                },
+                                getClientList: function () {
+                                    return new Promise((resolve) => {
+                                        this._socket.emit("FWK_WS_GET_CLIENT_LIST", null, (response) => {
+                                            const clients = [];
+                                            response.forEach((id) => {
+                                                const type = (id === this._socket.id) ? "YOU" : "OTHER";
+                                                clients.push({ id: id, type: type });
+                                            });
+                                            resolve(clients);
+                                        });
+                                    });
+                                },
+                                connect: function (url) {
+                                    if (!this.isConnected()) {
+                                        this._socket = io.connect(url);
+                                        events.forEach((event) => {
+                                            this._socket.on(event.name, (data) => {
+                                                app.fwkGetEventBus().emit(event.name, data);
+                                            });
+                                        });
+                                    }
+                                }
+                            };
+                        }
+                    });
+                }
             }
         }
     };
+    // init manager
     for (var manager in Fwk.manager) {
         Fwk.manager[manager].init();
     }

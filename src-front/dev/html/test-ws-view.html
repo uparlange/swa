@@ -1,0 +1,21 @@
+<div>
+    <v-card class="mt-3">
+        <v-card-title>
+            Client(s)
+        </v-card-title>
+    </v-card>
+    <v-list>
+        <template v-for="(client, index) in clients" :key="client.id">
+            <v-list-tile>
+                <v-list-tile-content>
+                    <v-list-tile-title>{{client.type}} : {{client.id}}</v-list-tile-title>
+                </v-list-tile-content>
+            </v-list-tile>
+        </template>
+    </v-list>
+    <v-card class="mt-3">
+        <v-card-title>
+            Room(s)
+        </v-card-title>
+    </v-card>
+</div>
