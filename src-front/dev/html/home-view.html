@@ -4,7 +4,13 @@
             <h3>Simple Web Application</h3>
         </v-card-title>
         <v-card-text>
-            Description...
+            {{$t("LABEL_SYNOPSIS")}}
+        </v-card-text>
+        <v-card-text>
+            <router-link to="test">{{$t("LABEL_TEST_FEATURES")}}</router-link>
+        </v-card-text>
+        <v-card-text>
+            <a href="https://s-w-a.herokuapp.com/doc/" target="_blank">Documentation</a>
         </v-card-text>
     </v-card>
     <div v-for="group in groups" :key="group.labelKey">

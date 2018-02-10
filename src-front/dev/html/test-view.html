@@ -1,14 +1,16 @@
 <div>
     <v-card>
-        <v-card-text>
-            <router-link to="/test/vue">VUE</router-link>
-            <span>|</span>
-            <router-link to="/test/i18n">I18N</router-link>
-            <span>|</span>
-            <router-link to="/test/ws">WS</router-link>
-        </v-card-text>
+        <v-tabs fixed-tabs>
+            <v-tab v-for="tab in tabs" :key="tab.label" :href="'#'+tab.link" @click="showTab(tab)">
+                {{tab.label}}
+            </v-tab>
+            <v-tabs-items>
+                <v-card-text>
+                    <transition name="component-fade" mode="out-in">
+                        <router-view></router-view>
+                    </transition>
+                </v-card-text>
+            </v-tabs-items>
+        </v-tabs>
     </v-card>
-    <transition name="component-fade" mode="out-in">
-        <router-view class="mt-3"></router-view>
-    </transition>
 </div>

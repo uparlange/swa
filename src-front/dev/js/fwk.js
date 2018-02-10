@@ -569,10 +569,13 @@
                         { name: "FWK_WS_CLIENT_ADDED", hook: "afterSocketClientAdded" },
                         { name: "FWK_WS_CLIENT_REMOVED", hook: "afterSocketClientRemoved" },
                     ];
+                    const getEventHandler = function (eventName) {
+                        return "_" + eventName + "handler";
+                    };
                     commonMixins.push({
                         beforeCreate: function () {
                             events.forEach((event) => {
-                                const eventHandler = "_" + event.name + "handler";
+                                const eventHandler = getEventHandler(event.name);
                                 this[eventHandler] = (data) => {
                                     if (event.hook) {
                                         callHook(this, event.hook, data);
@@ -583,7 +586,7 @@
                         },
                         beforeDestroy: function () {
                             events.forEach((event) => {
-                                const eventHandler = "_" + event.name + "handler";
+                                const eventHandler = getEventHandler(event.name);
                                 app.fwkGetEventBus().off(event.name, this[eventHandler]);
                             });
                         }
@@ -597,7 +600,9 @@
                                 },
                                 getClientList: function () {
                                     return new Promise((resolve) => {
+                                        app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
                                         this._socket.emit("FWK_WS_GET_CLIENT_LIST", null, (response) => {
+                                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
                                             const clients = [];
                                             response.forEach((id) => {
                                                 const type = (id === this._socket.id) ? "YOU" : "OTHER";
@@ -624,7 +629,7 @@
             }
         }
     };
-    // init manager
+    // init managers
     for (var manager in Fwk.manager) {
         Fwk.manager[manager].init();
     }

@@ -1,4 +1,6 @@
 {
+    "LABEL_SYNOPSIS": "Starter for a Fullstack Javascript Web Application with the following features: Manage cache, authentication, pages and services (secure or not), connection management, multi-language and more...",
+    "LABEL_TEST_FEATURES": "Test Features",
     "LABEL_NO_CONNECTION": "No connection !",
     "LABEL_CONNECTED": "Connected !",
     "LABEL_ICON": "Icon",

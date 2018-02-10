@@ -1,4 +1,6 @@
 {
+    "LABEL_SYNOPSIS": "Kit de démarrage pour une application Web Fullstack Javascript avec les fontionnalités suivantes : Gestion du cache (manifest), authentification, pages et services (sécurisées ou non), gestion de la connexion, multi-langue et plus...",
+    "LABEL_TEST_FEATURES": "Tester les Fonctionnalités",
     "LABEL_NO_CONNECTION": "Hors connexion !",
     "LABEL_CONNECTED": "Connecté !",
     "LABEL_ICON": "Icone",

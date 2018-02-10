@@ -1,7 +1,5 @@
 <div>
-    <v-card>
-        <v-card-text>
-            <v-select v-bind:items="locales" v-model="selectedLocale" label="Select" single-line bottom></v-select>
-        </v-card-text>
-    </v-card>
+    <v-select v-bind:items="locales" v-model="selectedLocale" label="Select" single-line bottom></v-select>
+    <p>SWA (Simple Web Application)</p>
+    <p>{{$t("LABEL_SYNOPSIS")}}</p>
 </div>
