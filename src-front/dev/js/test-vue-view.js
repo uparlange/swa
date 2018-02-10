@@ -2,10 +2,8 @@
 
 (function (app) {
     app.fwkDefineComponent({ id: "TestVueView" }, {
-        data: function () {
-            return {
-                label: "TestComponent"
-            }
-        }
+        mixins: [
+            app.fwkUseMixin({ id: "TestMixin" })
+        ]
     });
 }(window.app || (window.app = {})));

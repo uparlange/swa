@@ -19,13 +19,13 @@
                 ]
             }
         },
-        created: function () {
-            this._refresh();
+        refreshData: function () {
+            this._refreshData();
         },
         watch: {
             selectedDate: function () {
                 this.selectDateDialogVisible = false;
-                this._refresh();
+                this._refreshData();
             }
         },
         methods: {
@@ -47,7 +47,7 @@
                     const request = this.$http.put("/services/events", this.currentEvent);
                     app.fwkCallService(request).then(() => {
                         this.addUpdateEventDialogVisible = false;
-                        this._refresh();
+                        this._refreshData();
                     }, () => {
                         // TODO manage
                     });
@@ -56,7 +56,7 @@
             remove: function (event) {
                 const request = this.$http.delete("/services/events?id=" + event._id);
                 app.fwkCallService(request).then(() => {
-                    this._refresh();
+                    this._refreshData();
                 }, () => {
                     // TODO manage
                 });
@@ -69,7 +69,7 @@
                 selectedDate.setSeconds(now.getSeconds());
                 return selectedDate.toISOString();
             },
-            _refresh: function () {
+            _refreshData: function () {
                 sessionStorage.setItem("EventsView_selectedDate", this.selectedDate);
                 const request = this.$http.get("/services/events?date=" + this.selectedDate);
                 app.fwkCallService(request).then((response) => {

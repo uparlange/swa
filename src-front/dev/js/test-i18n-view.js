@@ -8,18 +8,23 @@
                 selectedLocale: app.fwkGetCurrentLocale()
             }
         },
+        refreshData: function () {
+            this._refreshData();
+        },
         watch: {
             selectedLocale: function () {
                 app.fwkSetLocale(this.selectedLocale);
             }
         },
-        created: function () {
-            const request = this.$http.get("/services/locales");
-            app.fwkCallService(request).then((response) => {
-                this.locales = response.body.data.locales;
-            }, () => {
-                // TODO manage error
-            });
+        methods: {
+            _refreshData: function () {
+                const request = this.$http.get("/services/locales");
+                app.fwkCallService(request).then((response) => {
+                    this.locales = response.body.data.locales;
+                }, () => {
+                    // TODO manage error
+                });
+            }
         }
     });
 }(window.app || (window.app = {})));

@@ -14,13 +14,19 @@ const ExpressWebSockets = require(__dirname + "/ExpressWebSockets");
 const Config = require(__dirname + "/Config");
 
 // body
+let expressInstance = null;
+let socketInstance = null;
+const getInstance = function () {
+    return expressInstance;
+};
+const getSocketInstance = function () {
+    return socketInstance;
+};
 const start = function () {
     // init express
-    const expressInstance = express();
+    expressInstance = express();
     expressInstance.use(Passport.getInstance().initialize());
-    expressInstance.use(bodyParser.urlencoded({
-        extended: true
-    }));
+    expressInstance.use(bodyParser.urlencoded({ extended: true }));
     expressInstance.use(bodyParser.json());
     expressInstance.use(compression());
     // init views
@@ -31,13 +37,13 @@ const start = function () {
     ExpressServices.init(expressInstance);
     // init websockets
     const serverInstance = http.Server(expressInstance);
-    const ioInstance = io(serverInstance);
-    ExpressWebSockets.init(ioInstance);
+    socketInstance = io(serverInstance);
+    ExpressWebSockets.init(socketInstance);
     // start server
-    serverInstance.listen(Config.getConfig().getExpressPort(), function () {
-
-    });
+    serverInstance.listen(Config.getConfig().getExpressPort(), function () { });
 };
 
 // exported methods
 exports.start = start;
+exports.getInstance = getInstance;
+exports.getSocketInstance = getSocketInstance;

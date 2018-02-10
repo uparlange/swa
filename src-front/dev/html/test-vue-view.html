@@ -1,3 +1,25 @@
 <div>
-    <test-component v-test-directive v-for="index in 100" :label="label" :index="index"></test-component>
+    <v-expansion-panel expand>
+        <v-expansion-panel-content>
+            <div slot="header">test-component.html</div>
+            <v-card>
+                <v-card-text>
+                    <code v-pre>&lt;div @mouseover=&quot;fontWeight='bold'&quot; @mouseout=&quot;fontWeight='normal'&quot; :style=&quot;{ fontWeight: fontWeight, cursor:'pointer' }&quot;&gt;{{index | zerofill(3)}}. {{label}} --&gt; 'js/{{label | dasherize}}.js', 'html/{{label | dasherize}}.html'&lt;/div&gt;</code>
+                </v-card-text>
+            </v-card>
+        </v-expansion-panel-content>
+        <v-expansion-panel-content>
+            <div slot="header">test-vue-view.html</div>
+            <v-card>
+                <v-card-text>
+                    <code v-pre>&lt;test-component v-test-directive v-for=&quot;index in 100&quot; :label=&quot;label&quot; :index=&quot;index&quot;&gt;&lt;/test-component&gt;</code>
+                </v-card-text>
+            </v-card>
+        </v-expansion-panel-content>
+    </v-expansion-panel>
+    <v-card class="mt-3">
+        <v-card-text>
+            <test-component v-test-directive v-for="index in 100" :label="label" :index="index"></test-component>
+        </v-card-text>
+    </v-card>
 </div>

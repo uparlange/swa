@@ -12,10 +12,11 @@
     const VueI18n = window.VueI18n;
     // correct eslint error 'io' is not defined
     const io = window.io;
-    // attributes
+    // params
     const loggerClassName = "Fwk";
-    const commonMixins = [];
-    // methods
+    const getEventHandler = function (eventName) {
+        return "_" + eventName + "handler";
+    };
     const callHook = function (vm, hook, data) {
         if (vm.$options[hook]) {
             vm.$options[hook].call(vm, data);
@@ -24,6 +25,55 @@
     // Fwk
     const Fwk = {
         manager: {
+            LogManager: {
+                init: function () {
+                    const worker = new Worker("js/log-worker.js");
+                    /**
+                     * @name fwkGetLogger
+                     * @function
+                     * @memberof app
+                     * @param {String} className
+                     * @returns {Object}
+                     */
+                    app.fwkGetLogger = (className) => {
+                        return {
+                            debug: function (message) {
+                                this._log("debug", message);
+                            },
+                            warn: function (message) {
+                                this._log("warn", message);
+                            },
+                            _log: function (methodName, message) {
+                                worker.postMessage({ methodName: methodName, className: className, message: message });
+                            }
+                        }
+                    }
+                }
+            },
+            EventBus: {
+                _vue: new Vue(),
+                init: function () {
+                    /**
+                     * @name fwkGetEventBus
+                     * @function
+                     * @memberof app
+                     * @returns {Object}
+                     */
+                    app.fwkGetEventBus = () => {
+                        return this;
+                    };
+                },
+                emit: function (eventName, data) {
+                    app.fwkGetLogger(loggerClassName).debug("EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
+                    this._vue.$emit(eventName, data);
+                },
+                on: function (eventName, callback) {
+                    this._vue.$on(eventName, callback);
+                },
+                off: function (eventName, callback) {
+                    this._vue.$off(eventName, callback);
+                }
+            },
             RouterManager: {
                 _router: null,
                 _scrollPositions: {},
@@ -203,37 +253,103 @@
                     }
                 }
             },
-            EventBus: {
-                _vue: new Vue(),
+            PluginManager: {
+                _pluginCache: {},
                 init: function () {
                     /**
-                     * @name fwkGetEventBus
+                     * @name fwkDefinePlugin
                      * @function
                      * @memberof app
-                     * @returns {Object}
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {Object} description
                      */
-                    app.fwkGetEventBus = () => {
-                        return this;
+                    app.fwkDefinePlugin = (params, description) => {
+                        app.fwkGetLogger(loggerClassName).debug("Define plugin '" + params.id + "'");
+                        if (this._pluginCache[params.id]) {
+                            app.fwkGetLogger(loggerClassName).warn("Plugin '" + params.id + "' already registered... definition's crushed !");
+                        }
+                        this._pluginCache[params.id] = description;
+                        Vue.use(description);
                     };
-                },
-                emit: function (eventName, data) {
-                    app.fwkGetLogger(loggerClassName).debug("EventBus emit event '" + eventName + "' with data '" + (data ? JSON.stringify(data) : "") + "'");
-                    this._vue.$emit(eventName, data);
-                },
-                on: function (eventName, callback) {
-                    this._vue.$on(eventName, callback);
-                },
-                off: function (eventName, callback) {
-                    this._vue.$off(eventName, callback);
+                }
+            },
+            MixinManager: {
+                _mixinCache: {},
+                init: function () {
+                    /**
+                     * @name fwkDefineMixin
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {Object} description
+                     */
+                    app.fwkDefineMixin = (params, description) => {
+                        app.fwkGetLogger(loggerClassName).debug("Define mixin '" + params.id + "'");
+                        if (this._mixinCache[params.id]) {
+                            app.fwkGetLogger(loggerClassName).warn("Mixin '" + params.id + "' already registered... definition's crushed !");
+                        }
+                        this._mixinCache[params.id] = description;
+                    };
+                    /**
+                     * @name fwkUseMixin
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     */
+                    app.fwkUseMixin = (params) => {
+                        return this._mixinCache[params.id];
+                    };
+                }
+            },
+            DirectiveManager: {
+                _directiveCache: {},
+                init: function () {
+                    /**
+                     * @name fwkDefineDirective
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {Object} description
+                     */
+                    app.fwkDefineDirective = (params, description) => {
+                        app.fwkGetLogger(loggerClassName).debug("Define directive '" + params.id + "'");
+                        if (this._directiveCache[params.id]) {
+                            app.fwkGetLogger(loggerClassName).warn("Directive '" + params.id + "' already registered... definition's crushed !");
+                        }
+                        Vue.directive(app.fwkGetStringUtils().dasherize(params.id), description);
+                        this._directiveCache[params.id] = true;
+                    };
+                }
+            },
+            FilterManager: {
+                _filterCache: {},
+                init: function () {
+                    /**
+                     * @name fwkDefineFilter
+                     * @function
+                     * @memberof app
+                     * @param {Object} params
+                     * @param {String} params.id
+                     * @param {function} callback
+                     */
+                    app.fwkDefineFilter = (params, callback) => {
+                        app.fwkGetLogger(loggerClassName).debug("Define filter '" + params.id + "'");
+                        if (this._filterCache[params.id]) {
+                            app.fwkGetLogger(loggerClassName).warn("Filter '" + params.id + "' already registered... definition's crushed !");
+                        }
+                        Vue.filter(params.id, callback);
+                        this._filterCache[params.id] = true;
+                    };
                 }
             },
             ComponentManager: {
                 _templateCache: {},
                 _componentCache: {},
-                _directiveCache: {},
-                _filterCache: {},
                 init: function () {
-                    // components
                     /**
                      * @name fwkDefineComponent
                      * @function
@@ -259,40 +375,6 @@
                         app.fwkGetLogger(loggerClassName).debug("Use component '" + params.id + "'");
                         Vue.component(app.fwkGetStringUtils().dasherize(params.id), this._useComponent(params));
                     };
-                    // filters
-                    /**
-                     * @name fwkDefineFilter
-                     * @function
-                     * @memberof app
-                     * @param {String} name
-                     * @param {function} callback
-                     */
-                    app.fwkDefineFilter = (name, callback) => {
-                        app.fwkGetLogger(loggerClassName).debug("Define filter '" + name + "'");
-                        if (this._filterCache[name]) {
-                            app.fwkGetLogger(loggerClassName).warn("Filter '" + name + "' already registered... definition's crushed !");
-                        }
-                        Vue.filter(name, callback);
-                        this._filterCache[name] = true;
-                    };
-                    // directives
-                    /**
-                     * @name fwkDefineDirective
-                     * @function
-                     * @memberof app
-                     * @param {Object} params
-                     * @param {String} params.id
-                     * @param {Object} description
-                     */
-                    app.fwkDefineDirective = (params, description) => {
-                        app.fwkGetLogger(loggerClassName).debug("Define directive '" + params.id + "'");
-                        if (this._directiveCache[params.id]) {
-                            app.fwkGetLogger(loggerClassName).warn("Directive '" + params.id + "' already registered... definition's crushed !");
-                        }
-                        Vue.directive(app.fwkGetStringUtils().dasherize(params.id), description);
-                        this._directiveCache[params.id] = true;
-                    };
-                    // route components
                     /**
                      * @name fwkUseRouteComponent
                      * @function
@@ -306,7 +388,6 @@
                         app.fwkGetLogger(loggerClassName).debug("Use route component '" + params.id + "'");
                         return this._useComponent(params);
                     };
-                    // application
                     /**
                      * @name fwkBootstrapComponent
                      * @function
@@ -372,7 +453,6 @@
                                             reject(params.id);
                                         } else {
                                             componentDescription.template = templateDescription;
-                                            componentDescription.mixins = commonMixins;
                                             resolve(componentDescription);
                                         }
                                     });
@@ -478,37 +558,38 @@
                     window.addEventListener("online", () => {
                         this._onlineStatus();
                     });
+                    // mixin
+                    const eventName = "FWK_APPLICATION_ONLINE_STATUS_CHANGED";
+                    app.fwkDefineMixin({ id: "FwkApplicationMixin" }, {
+                        beforeCreate: function () {
+                            const eventHandler = getEventHandler(eventName);
+                            this[eventHandler] = (data) => {
+                                if (data.online) {
+                                    callHook(this, "refreshData");
+                                }
+                            };
+                            app.fwkGetEventBus().on(eventName, this[eventHandler]);
+                        },
+                        created: function () {
+                            callHook(this, "refreshData");
+                        },
+                        beforeDestroy: function () {
+                            const eventHandler = getEventHandler(eventName);
+                            app.fwkGetEventBus().off(eventName, this[eventHandler]);
+                        }
+                    });
+                    // plugin
+                    app.fwkDefinePlugin({ id: "FwkApplicationPlugin" }, {
+                        install: function (Vue) {
+                            Vue.mixin(app.fwkUseMixin({ id: "FwkApplicationMixin" }));
+                        }
+                    });
                 },
                 _updateReady: function () {
                     app.fwkGetEventBus().emit("FWK_APPLICATION_UPDATE_READY");
                 },
                 _onlineStatus: function () {
                     app.fwkGetEventBus().emit("FWK_APPLICATION_ONLINE_STATUS_CHANGED", { online: navigator.onLine });
-                }
-            },
-            LogManager: {
-                init: function () {
-                    /**
-                     * @name fwkGetLogger
-                     * @function
-                     * @memberof app
-                     * @param {String} className
-                     * @returns {Object}
-                     */
-                    app.fwkGetLogger = (className) => {
-                        return {
-                            _console: console,
-                            debug: function (message) {
-                                this._console.debug(this._getMessage(message));
-                            },
-                            warn: function (message) {
-                                this._console.warn(this._getMessage(message));
-                            },
-                            _getMessage: function (message) {
-                                return className + ": " + message;
-                            }
-                        }
-                    }
                 }
             },
             UtilManager: {
@@ -565,14 +646,12 @@
             },
             SocketManager: {
                 init: function () {
+                    // mixin
                     const events = [
                         { name: "FWK_WS_CLIENT_ADDED", hook: "afterSocketClientAdded" },
                         { name: "FWK_WS_CLIENT_REMOVED", hook: "afterSocketClientRemoved" },
                     ];
-                    const getEventHandler = function (eventName) {
-                        return "_" + eventName + "handler";
-                    };
-                    commonMixins.push({
+                    app.fwkDefineMixin({ id: "FwkSocketIoMixin" }, {
                         beforeCreate: function () {
                             events.forEach((event) => {
                                 const eventHandler = getEventHandler(event.name);
@@ -591,8 +670,10 @@
                             });
                         }
                     });
-                    Vue.use({
+                    // plugin
+                    app.fwkDefinePlugin({ id: "FwkSocketIoPlugin" }, {
                         install: function (Vue) {
+                            Vue.mixin(app.fwkUseMixin({ id: "FwkSocketIoMixin" }));
                             Vue.prototype.$socket = {
                                 _socket: null,
                                 isConnected: function () {
@@ -600,9 +681,7 @@
                                 },
                                 getClientList: function () {
                                     return new Promise((resolve) => {
-                                        app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
                                         this._socket.emit("FWK_WS_GET_CLIENT_LIST", null, (response) => {
-                                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
                                             const clients = [];
                                             response.forEach((id) => {
                                                 const type = (id === this._socket.id) ? "YOU" : "OTHER";

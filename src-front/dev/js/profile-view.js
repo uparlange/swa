@@ -12,13 +12,8 @@
                 _profile: {}
             }
         },
-        created: function () {
-            const request = this.$http.get("/services/users/current");
-            app.fwkCallService(request).then((response) => {
-                this._setProfile(response.body.data.user);
-            }, () => {
-                // TODO manage
-            });
+        refreshData: function () {
+            this._refreshData();
         },
         methods: {
             logout: function () {
@@ -41,6 +36,14 @@
             _setProfile: function (profile) {
                 this._profile = Object.assign({}, profile);
                 this.profile = profile;
+            },
+            _refreshData: function () {
+                const request = this.$http.get("/services/users/current");
+                app.fwkCallService(request).then((response) => {
+                    this._setProfile(response.body.data.user);
+                }, () => {
+                    // TODO manage
+                });
             }
         }
     });
