@@ -1,7 +1,10 @@
 <div>
     <v-card>
         <v-card-title>
-            <h3>{{$t('LABEL_INFORMATIONS')}}</h3>
+            <h3>
+                <span>{{$t('LABEL_INFORMATIONS')}}</span>
+                <span v-if="location.address != null">({{location.address}})</span>
+            </h3>
         </v-card-title>
         <v-card-text>
             <v-form v-model="valid" ref="form">

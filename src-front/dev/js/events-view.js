@@ -44,7 +44,7 @@
             },
             save: function () {
                 if (this.$refs.form.validate()) {
-                    const request = this.$http.put("/services/events", this.currentEvent);
+                    const request = this.$http.put("/services/events", this.currentEvent, { headers: { Authorization: "Bearer " + app.fwkGetCurrentAuthorizationToken() } });
                     app.fwkCallService(request).then(() => {
                         this.addUpdateEventDialogVisible = false;
                         this._refreshData();
@@ -54,7 +54,7 @@
                 }
             },
             remove: function (event) {
-                const request = this.$http.delete("/services/events?id=" + event._id);
+                const request = this.$http.delete("/services/events?id=" + event._id, { headers: { Authorization: "Bearer " + app.fwkGetCurrentAuthorizationToken() } });
                 app.fwkCallService(request).then(() => {
                     this._refreshData();
                 }, () => {
@@ -71,7 +71,7 @@
             },
             _refreshData: function () {
                 sessionStorage.setItem("EventsView_selectedDate", this.selectedDate);
-                const request = this.$http.get("/services/events?date=" + this.selectedDate);
+                const request = this.$http.get("/services/events?date=" + this.selectedDate, { headers: { Authorization: "Bearer " + app.fwkGetCurrentAuthorizationToken() } });
                 app.fwkCallService(request).then((response) => {
                     this.events = response.body.data.events;
                 }, () => {

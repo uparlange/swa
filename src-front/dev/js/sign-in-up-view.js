@@ -43,10 +43,7 @@
                 }
             },
             _validateSignIn: function () {
-                const request = this.$http.post("/services/users/login", {
-                    login: this.login,
-                    password: this.password
-                });
+                const request = this.$http.post("/services/users/login", { login: this.login, password: this.password });
                 app.fwkCallService(request).then((response) => {
                     app.fwkSetAuthorizationToken(response.body.data.token);
                     app.fwkGetEventBus().emit("PROFILE_CHANGED", response.body.data.user);
@@ -55,10 +52,7 @@
                 });
             },
             _validateSignUp: function () {
-                const request = this.$http.post("/services/users/register", {
-                    login: this.login,
-                    password: this.password
-                });
+                const request = this.$http.post("/services/users/register", { login: this.login, password: this.password });
                 app.fwkCallService(request).then(() => {
                     // TODO display register ok
                     app.fwkNavigate("/sign/in");

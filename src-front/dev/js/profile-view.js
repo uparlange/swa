@@ -6,6 +6,7 @@
             return {
                 valid: true,
                 profile: {},
+                location: {},
                 rules: [
                     (v) => !!v || app.fwkGetLabel({ key: "ERROR_FIELD_IS_REQUIRED" })
                 ],
@@ -21,7 +22,7 @@
             },
             validate: function () {
                 if (this.$refs.form.validate()) {
-                    const request = this.$http.put("/services/users/current", this.profile);
+                    const request = this.$http.put("/services/users/current", this.profile, { headers: { Authorization: "Bearer " + app.fwkGetCurrentAuthorizationToken() } });
                     app.fwkCallService(request).then((response) => {
                         this._setProfile(response.body.data.user);
                         app.fwkGetEventBus().emit("PROFILE_CHANGED", response.body.data.user);
@@ -38,7 +39,14 @@
                 this.profile = profile;
             },
             _refreshData: function () {
-                const request = this.$http.get("/services/users/current");
+                // position
+                app.fwkGetCurrentLocation().then((location) => {
+                    this.location = location;
+                }, () => {
+                    // TODO manage
+                })
+                // profile
+                const request = this.$http.get("/services/users/current", { headers: { Authorization: "Bearer " + app.fwkGetCurrentAuthorizationToken() } });
                 app.fwkCallService(request).then((response) => {
                     this._setProfile(response.body.data.user);
                 }, () => {

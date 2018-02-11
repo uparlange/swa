@@ -174,7 +174,6 @@
                      * @function
                      * @memberof app
                      * @param {String} locale
-                     * @returns {String}
                      */
                     app.fwkSetLocale = (locale) => {
                         this._setLocale(locale);
@@ -188,10 +187,10 @@
                     if (this._locale !== locale) {
                         this._locale = locale;
                         if (this._i18n.messages[this._locale] !== undefined) {
-                            this._setUpdateLocale(this._locale);
+                            this._updateLocale(this._locale);
                         } else {
                             this._initLocale(this._locale).then(() => {
-                                this._setUpdateLocale(this._locale);
+                                this._updateLocale(this._locale);
                             });
                         }
                     }
@@ -203,7 +202,8 @@
                     params = params || {};
                     return this._i18n.t(params.key, params.locale, params.values);
                 },
-                _setUpdateLocale: function (locale) {
+                _updateLocale: function (locale) {
+                    app.fwkGetLogger(loggerClassName).debug("Set locale to : " + locale);
                     this._i18n.locale = locale;
                     document.querySelector("html").setAttribute("lang", locale);
                 },
@@ -222,7 +222,17 @@
                 }
             },
             SecurityManager: {
+                _token: null,
                 init: function () {
+                    /**
+                     * @name fwkGetCurrentAuthorizationToken
+                     * @function
+                     * @memberof app
+                     * @returns {String}
+                     */
+                    app.fwkGetCurrentAuthorizationToken = () => {
+                        return this._token;
+                    };
                     /**
                      * @name fwkSetAuthorizationToken
                      * @function
@@ -243,14 +253,10 @@
                     });
                 },
                 isConnected: function () {
-                    return (Vue.http.headers.common["Authorization"] != null);
+                    return (this._token != null);
                 },
                 _setToken: function (token) {
-                    if (!token) {
-                        delete Vue.http.headers.common["Authorization"];
-                    } else {
-                        Vue.http.headers.common["Authorization"] = "Bearer " + token;
-                    }
+                    this._token = token;
                 }
             },
             PluginManager: {
@@ -298,6 +304,7 @@
                      * @memberof app
                      * @param {Object} params
                      * @param {String} params.id
+                     * @returns {Object}
                      */
                     app.fwkUseMixin = (params) => {
                         return this._mixinCache[params.id];
@@ -584,6 +591,17 @@
                             Vue.mixin(app.fwkUseMixin({ id: "FwkApplicationMixin" }));
                         }
                     });
+                    // log
+                    app.fwkGetLogger(loggerClassName).debug("Running in webapp : " + this.isInWebApp());
+                },
+                isInWebApp: function () {
+                    return (this.isInWebAppiOS() || this.isInWebAppChrome());
+                },
+                isInWebAppiOS: function () {
+                    return (navigator.standalone == true);
+                },
+                isInWebAppChrome: function () {
+                    return (window.matchMedia('(display-mode: standalone)').matches);
                 },
                 _updateReady: function () {
                     app.fwkGetEventBus().emit("FWK_APPLICATION_UPDATE_READY");
@@ -594,6 +612,15 @@
             },
             UtilManager: {
                 init: function () {
+                    /**
+                     * @name fwkGetCurrentLocation
+                     * @function
+                     * @memberof app
+                     * @returns {Promise}
+                     */
+                    app.fwkGetCurrentLocation = () => {
+                        return this.LocationUtils.getCurrentLocation();
+                    };
                     /**
                      * @name fwkGetStringUtils
                      * @function
@@ -641,6 +668,41 @@
                         return function (value) {
                             return value && value.length >= length || app.fwkGetLabel({ key: "ERROR_FIELD_HAS_MIN_LENGTH", values: { length: length } })
                         }
+                    }
+                },
+                LocationUtils: {
+                    getCurrentLocation: function () {
+                        return new Promise((resolve) => {
+                            const location = {};
+                            this.getCurrentPosition().then((response) => {
+                                location.lat = response.coords.latitude;
+                                location.long = response.coords.longitude;
+                                this.getAddresses(location.lat, location.long).then((response) => {
+                                    if (response.body.results.length > 0) {
+                                        location.address = response.body.results[0].formatted_address;
+                                    }
+                                    resolve(location);
+                                }, (response) => {
+                                    resolve(location);
+                                });
+                            }, (response) => {
+                                resolve(location);
+                            });
+                        });
+                    },
+                    getCurrentPosition: function () {
+                        return new Promise((resolve) => {
+                            navigator.geolocation.getCurrentPosition((response) => {
+                                resolve(response);
+                            }, (response) => {
+                                resolve({});
+                            });
+                        });
+                    },
+                    getAddresses: function (lat, long) {
+                        const url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + long + "&sensor=true&key=AIzaSyDPz8XK2JCEVWdw0kyIgdMKss_bsROGgq0";
+                        const request = Vue.http.get(url);
+                        return app.fwkCallService(request);
                     }
                 }
             },
