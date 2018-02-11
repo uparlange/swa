@@ -1,6 +1,7 @@
 "use strict";
 
 (function (app) {
+    let signType = null;
     app.fwkDefineComponent({ id: "SignInUpView" }, {
         data: function () {
             return {
@@ -21,8 +22,7 @@
                 message: {
                     visible: false,
                     value: ""
-                },
-                _type: null
+                }
             }
         },
         created: function () {
@@ -61,7 +61,7 @@
                 });
             },
             _init: function (type) {
-                this._type = type;
+                signType = type;
                 if (this._signIn()) {
                     this.showRegisterBtn = true;
                     this.showCancelBtn = false;
@@ -73,7 +73,7 @@
                 }
             },
             _signIn: function () {
-                return (this._type === "in");
+                return (signType === "in");
             },
             _showMessage: function (value) {
                 this.message.value = value;

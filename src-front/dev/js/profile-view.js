@@ -1,6 +1,7 @@
 "use strict";
 
 (function (app) {
+    let currentProfile = null;
     app.fwkDefineComponent({ id: "ProfileView" }, {
         data: function () {
             return {
@@ -9,8 +10,7 @@
                 location: {},
                 rules: [
                     (v) => !!v || app.fwkGetLabel({ key: "ERROR_FIELD_IS_REQUIRED" })
-                ],
-                _profile: {}
+                ]
             }
         },
         refreshData: function () {
@@ -32,10 +32,10 @@
                 }
             },
             hasChanges: function () {
-                return !(JSON.stringify(this._profile) == JSON.stringify(this.profile));
+                return !(JSON.stringify(currentProfile) == JSON.stringify(this.profile));
             },
             _setProfile: function (profile) {
-                this._profile = Object.assign({}, profile);
+                currentProfile = Object.assign({}, profile);
                 this.profile = profile;
             },
             _refreshData: function () {

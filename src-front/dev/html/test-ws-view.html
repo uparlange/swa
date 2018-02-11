@@ -1,12 +1,12 @@
 <div>
-    <v-text-field readonly label="Chat" textarea v-model="conversation"></v-text-field>
+    <div style="height:134px;padding-left:5px;padding-right:5px;padding-top:5px;border: 1px solid rgba(0,0,0,.54);overflow-y:scroll;" v-html="conversation"></div>
     <v-container fluid grid-list-xs>
         <v-layout row justify-space-between>
             <v-flex xs4>
                 <v-text-field label="Message" v-model="message"></v-text-field>
             </v-flex>
             <v-flex xs4>
-                    <v-select v-bind:items="clients" item-text="label" item-value="id" v-model="clientId" label="Visibility" single-line bottom></v-select>
+                <v-select v-bind:items="clients" item-text="label" item-value="id" v-model="clientId" label="Visibility" single-line bottom></v-select>
             </v-flex>
             <v-flex xs4 text-xs-right>
                 <v-btn @click="sendMessage()" color="primary">Send</v-btn>

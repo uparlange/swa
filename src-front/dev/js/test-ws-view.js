@@ -1,15 +1,15 @@
 "use strict";
 
 (function (app) {
+    let chats = null;
+    let previousClientId = null;
     app.fwkDefineComponent({ id: "TestWsView" }, {
         data: function () {
             return {
                 clients: [],
                 clientId: null,
                 conversation: "",
-                message: "",
-                _chats: null,
-                _previousClientId: null
+                message: ""
             }
         },
         watch: {
@@ -27,8 +27,11 @@
         afterSocketClientAdded: function () {
             this._refreshClients();
         },
-        afterSocketClientRemoved: function () {
+        afterSocketClientRemoved: function (event) {
             this._refreshClients();
+            if (this.clientId === event.from) {
+                this._selectChat("ALL");
+            }
         },
         afterSocketMessageReceived: function (event) {
             this._selectChat((event.to == "ALL") ? event.to : event.from);
@@ -38,7 +41,7 @@
             addConversation: function (clientId, message) {
                 this.clients.forEach((client) => {
                     if (client.id === clientId) {
-                        this.conversation += client.label + " : " + message + "\r\n";
+                        this.conversation += '<div style="margin-bottom:5px"><b>' + client.label + '</b> : ' + message + '</div>';
                         this.message = "";
                     }
                     return;
@@ -54,17 +57,17 @@
                 });
             },
             _getChat: function (id) {
-                if (this._chats == null) {
-                    this._chats = {};
+                if (chats == null) {
+                    chats = {};
                 }
-                if (this._chats[id] == null) {
-                    this._chats[id] = { conversation: "", message: "" };
+                if (chats[id] == null) {
+                    chats[id] = { conversation: "", message: "" };
                 }
-                return this._chats[id];
+                return chats[id];
             },
             _selectChat: function (id) {
                 // save current values
-                const currentChat = this._getChat(this._previousClientId);
+                const currentChat = this._getChat(previousClientId);
                 currentChat.conversation = this.conversation;
                 currentChat.message = this.message;
                 // set new values
@@ -74,7 +77,7 @@
                 // set selection
                 this.clientId = id;
                 // set previous
-                this._previousClientId = id;
+                previousClientId = id;
             },
             _refreshClients: function () {
                 this.$socket.getClientList().then((clients) => {
