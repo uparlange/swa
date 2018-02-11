@@ -682,10 +682,10 @@
                                         location.address = response.body.results[0].formatted_address;
                                     }
                                     resolve(location);
-                                }, (response) => {
+                                }, () => {
                                     resolve(location);
                                 });
-                            }, (response) => {
+                            }, () => {
                                 resolve(location);
                             });
                         });
@@ -694,7 +694,7 @@
                         return new Promise((resolve) => {
                             navigator.geolocation.getCurrentPosition((response) => {
                                 resolve(response);
-                            }, (response) => {
+                            }, () => {
                                 resolve({});
                             });
                         });
