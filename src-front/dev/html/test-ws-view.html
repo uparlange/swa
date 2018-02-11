@@ -1,13 +1,16 @@
 <div>
-    <h3>Client(s)</h3>
-    <v-list>
-        <template v-for="(client, index) in clients" :key="client.id">
-            <v-list-tile>
-                <v-list-tile-content>
-                    <v-list-tile-title>{{client.type}} : {{client.id}}</v-list-tile-title>
-                </v-list-tile-content>
-            </v-list-tile>
-        </template>
-    </v-list>
-    <h3>Room(s)</h3>
+    <v-text-field readonly label="Chat" textarea v-model="conversation"></v-text-field>
+    <v-container fluid grid-list-xs>
+        <v-layout row justify-space-between>
+            <v-flex xs4>
+                <v-text-field label="Message" v-model="message"></v-text-field>
+            </v-flex>
+            <v-flex xs4>
+                    <v-select v-bind:items="clients" item-text="label" item-value="id" v-model="clientId" label="Visibility" single-line bottom></v-select>
+            </v-flex>
+            <v-flex xs4 text-xs-right>
+                <v-btn @click="sendMessage()" color="primary">Send</v-btn>
+            </v-flex>
+        </v-layout>
+    </v-container>
 </div>

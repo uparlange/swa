@@ -709,26 +709,27 @@
             SocketManager: {
                 init: function () {
                     // mixin
-                    const events = [
+                    const handlers = [
                         { name: "FWK_WS_CLIENT_ADDED", hook: "afterSocketClientAdded" },
                         { name: "FWK_WS_CLIENT_REMOVED", hook: "afterSocketClientRemoved" },
+                        { name: "FWK_WS_MESSAGE_RECEIVED", hook: "afterSocketMessageReceived" },
                     ];
                     app.fwkDefineMixin({ id: "FwkSocketIoMixin" }, {
                         beforeCreate: function () {
-                            events.forEach((event) => {
-                                const eventHandler = getEventHandler(event.name);
-                                this[eventHandler] = (data) => {
-                                    if (event.hook) {
-                                        callHook(this, event.hook, data);
+                            handlers.forEach((handler) => {
+                                const eventHandler = getEventHandler(handler.name);
+                                this[eventHandler] = (event) => {
+                                    if (handler.hook) {
+                                        callHook(this, handler.hook, event);
                                     }
                                 };
-                                app.fwkGetEventBus().on(event.name, this[eventHandler]);
+                                app.fwkGetEventBus().on(handler.name, this[eventHandler]);
                             });
                         },
                         beforeDestroy: function () {
-                            events.forEach((event) => {
-                                const eventHandler = getEventHandler(event.name);
-                                app.fwkGetEventBus().off(event.name, this[eventHandler]);
+                            handlers.forEach((handler) => {
+                                const eventHandler = getEventHandler(handler.name);
+                                app.fwkGetEventBus().off(handler.name, this[eventHandler]);
                             });
                         }
                     });
@@ -741,24 +742,26 @@
                                 isConnected: function () {
                                     return !!this._socket;
                                 },
+                                sendMessage: function (params) {
+                                    return new Promise((resolve) => {
+                                        this._socket.emit("FWK_WS_SEND_MESSAGE", params, (response) => {
+                                            resolve(response);
+                                        });
+                                    });
+                                },
                                 getClientList: function () {
                                     return new Promise((resolve) => {
                                         this._socket.emit("FWK_WS_GET_CLIENT_LIST", null, (response) => {
-                                            const clients = [];
-                                            response.forEach((id) => {
-                                                const type = (id === this._socket.id) ? "YOU" : "OTHER";
-                                                clients.push({ id: id, type: type });
-                                            });
-                                            resolve(clients);
+                                            resolve(response);
                                         });
                                     });
                                 },
                                 connect: function (url) {
                                     if (!this.isConnected()) {
                                         this._socket = io.connect(url);
-                                        events.forEach((event) => {
-                                            this._socket.on(event.name, (data) => {
-                                                app.fwkGetEventBus().emit(event.name, data);
+                                        handlers.forEach((handler) => {
+                                            this._socket.on(handler.name, (event) => {
+                                                app.fwkGetEventBus().emit(handler.name, event);
                                             });
                                         });
                                     }
