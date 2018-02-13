@@ -779,7 +779,7 @@
                                                     app.fwkGetEventBus().emit(handler.name, event);
                                                 });
                                             });
-                                            this._socket.emit("FWK_WS_SET_USER_DATA", userData, (response) => {
+                                            this._socket.emit("FWK_WS_SET_USER_DATA", userData, () => {
                                                 resolve();
                                             });
                                         } else {

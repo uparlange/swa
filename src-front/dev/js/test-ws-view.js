@@ -6,7 +6,7 @@
     let chats = null;
     app.fwkDefineDirective({ id: "AutoScroll" }, {
         bind: function (el) {
-            el._mutationObserver = new MutationObserver((mutations) => {
+            el._mutationObserver = new MutationObserver(() => {
                 el.scrollTop = el.scrollHeight;
             });
             var config = {
@@ -42,8 +42,8 @@
         created: function () {
             app.fwkLoadJs("https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js").then(() => {
                 const url = null;
-                const userData = { color: randomColor() };
-                this.$socket.connect(url, userData).then((id) => {
+                const userData = { color: window.randomColor() };
+                this.$socket.connect(url, userData).then(() => {
                     this._refreshClients().then(() => {
 
                     });
@@ -53,7 +53,7 @@
         beforeDestroy: function () {
             this._saveConversation(this.clientId);
             sessionStorage.setItem("TestWsView_chats", JSON.stringify(chats));
-            sessionStorage.setItem("TestWsView_clientId", clientId);
+            sessionStorage.setItem("TestWsView_clientId", this.clientId);
         },
         afterSocketClientAdded: function (event) {
             this._refreshClients().then(() => {
