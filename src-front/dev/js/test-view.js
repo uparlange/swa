@@ -10,11 +10,6 @@
                     { label: "WS", link: "ws" }
                 ]
             }
-        },
-        methods: {
-            showTab: function (tab) {
-                app.fwkNavigate(tab.link);
-            }
         }
     });
 }(window.app || (window.app = {})));

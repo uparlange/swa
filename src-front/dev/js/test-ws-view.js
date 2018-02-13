@@ -1,90 +1,125 @@
 "use strict";
 
 (function (app) {
+    const LABEL_ALL = "ALL";
+    const LABEL_YOU = "YOU";
     let chats = null;
-    let previousClientId = null;
+    app.fwkDefineDirective({ id: "AutoScroll" }, {
+        bind: function (el) {
+            el._mutationObserver = new MutationObserver((mutations) => {
+                el.scrollTop = el.scrollHeight;
+            });
+            var config = {
+                childList: true
+            };
+            el._mutationObserver.observe(el, config);
+        },
+        unbind: function (el) {
+            el._mutationObserver.disconnect();
+        }
+    });
     app.fwkDefineComponent({ id: "TestWsView" }, {
         data: function () {
             return {
                 clients: [],
                 clientId: null,
-                conversation: "",
-                message: ""
+                message: "",
+                conversation: ""
             }
         },
         watch: {
-            clientId: function () {
-                this._selectChat(this.clientId);
+            clientId: function (newValue, oldValue) {
+                this._saveConversation(oldValue);
+                this.conversation = this._getConversation(newValue);
             }
+        },
+        beforeCreate: function () {
+            chats = JSON.parse(sessionStorage.getItem("TestWsView_chats")) || {};
+            setTimeout(() => {
+                this.clientId = sessionStorage.getItem("TestWsView_clientId") || LABEL_ALL;
+            }, 0);
         },
         created: function () {
-            if (!this.$socket.isConnected()) {
-                this.$socket.connect();
-            } else {
-                this._refreshClients();
-            }
+            app.fwkLoadJs("https://cdnjs.cloudflare.com/ajax/libs/randomcolor/0.5.2/randomColor.min.js").then(() => {
+                const url = null;
+                const userData = { color: randomColor() };
+                this.$socket.connect(url, userData).then((id) => {
+                    this._refreshClients().then(() => {
+
+                    });
+                });
+            });
         },
-        afterSocketClientAdded: function () {
-            this._refreshClients();
+        beforeDestroy: function () {
+            this._saveConversation(this.clientId);
+            sessionStorage.setItem("TestWsView_chats", JSON.stringify(chats));
+            sessionStorage.setItem("TestWsView_clientId", clientId);
+        },
+        afterSocketClientAdded: function (event) {
+            this._refreshClients().then(() => {
+                this._addConversation(event.from, "connected");
+            });
         },
         afterSocketClientRemoved: function (event) {
-            this._refreshClients();
-            if (this.clientId === event.from) {
-                this._selectChat("ALL");
-            }
+            this._addConversation(event.from, "disconnected");
+            this._refreshClients().then(() => {
+                if (this.clientId === event.from) {
+                    this.clientId = LABEL_ALL;
+                }
+            });
         },
         afterSocketMessageReceived: function (event) {
-            this._selectChat((event.to == "ALL") ? event.to : event.from);
-            this.addConversation(event.from, event.data);
+            this.clientId = (event.to == LABEL_ALL) ? event.to : event.from;
+            setTimeout(() => {
+                this._addConversation(event.from, event.data);
+            }, 0);
         },
         methods: {
-            addConversation: function (clientId, message) {
-                this.clients.forEach((client) => {
-                    if (client.id === clientId) {
-                        this.conversation += '<div style="margin-bottom:5px"><b>' + client.label + '</b> : ' + message + '</div>';
-                        this.message = "";
-                    }
-                    return;
-                });
-            },
             sendMessage: function () {
-                const params = {
-                    data: this.message,
-                    to: this.clientId
-                };
-                this.$socket.sendMessage(params).then((id) => {
-                    this.addConversation(id, this.message);
+                if (this.message && this.message.length > 0) {
+                    const params = {
+                        data: this.message,
+                        to: this.clientId
+                    };
+                    this.$socket.sendMessage(params).then((id) => {
+                        this._addConversation(id, this.message);
+                    });
+                }
+            },
+            _getConversation: function (id) {
+                return chats[id] || "";
+            },
+            _saveConversation: function (id) {
+                chats[id] = this.conversation;
+            },
+            _addConversation: function (clientId, message) {
+                this._getClientList().then((clients) => {
+                    clients.forEach((client) => {
+                        if (client.id === clientId) {
+                            this.conversation += '<div style="margin-bottom:5px;color:' + client.userData.color + ';"><b>' + client.label + '</b> : ' + message + '</div>';
+                            this.message = "";
+                        }
+                        return;
+                    });
                 });
-            },
-            _getChat: function (id) {
-                if (chats == null) {
-                    chats = {};
-                }
-                if (chats[id] == null) {
-                    chats[id] = { conversation: "", message: "" };
-                }
-                return chats[id];
-            },
-            _selectChat: function (id) {
-                // save current values
-                const currentChat = this._getChat(previousClientId);
-                currentChat.conversation = this.conversation;
-                currentChat.message = this.message;
-                // set new values
-                const nextChat = this._getChat(id);
-                this.conversation = nextChat.conversation;
-                this.message = nextChat.message;
-                // set selection
-                this.clientId = id;
-                // set previous
-                previousClientId = id;
             },
             _refreshClients: function () {
-                this.$socket.getClientList().then((clients) => {
-                    this.clients = clients;
-                    if (this.clientId == null) {
-                        this._selectChat("ALL");
-                    }
+                return new Promise((resolve) => {
+                    this._getClientList().then((clients) => {
+                        this.clients = clients;
+                        resolve();
+                    });
+                });
+            },
+            _getClientList: function () {
+                return new Promise((resolve) => {
+                    this.$socket.getClientList().then((clients) => {
+                        clients.forEach((client) => {
+                            client.label = client.type + " (" + client.id + ")";
+                            client.disabled = (client.type == LABEL_YOU);
+                        });
+                        resolve(clients);
+                    });
                 });
             }
         }

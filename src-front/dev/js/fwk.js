@@ -416,7 +416,7 @@
                             resolve(componentDescription);
                         } else {
                             const componentUrl = this._getComponentUrl(params);
-                            Fwk.manager.ResourceManager.loadJs(componentUrl).then(() => {
+                            app.fwkLoadJs(componentUrl).then(() => {
                                 app.fwkGetLogger(loggerClassName).debug("Component file '" + componentUrl + "' loaded");
                                 componentDescription = this._getComponentDescription(params.id);
                                 resolve(componentDescription);
@@ -514,23 +514,40 @@
                     app.fwkCallService = (request) => {
                         return this._callService(request);
                     };
+                    /**
+                     * @name fwkLoadJs
+                     * @function
+                     * @memberof app
+                     * @param {String} url
+                     * @returns {Promise}
+                     */
+                    app.fwkLoadJs = (url) => {
+                        return this._loadJs(url);
+                    }
                 },
-                loadJs: function (url) {
+                _loadJs: function (url) {
                     return new Promise((resolve, reject) => {
-                        app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
-                        const script = document.createElement("script");
-                        script.onload = () => {
-                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
-                            resolve();
-                        };
-                        script.onerror = () => {
-                            // TODO manage
-                            reject();
-                        };
-                        document.head.appendChild(script);
-                        script.src = url;
+                        const scriptExists = Array.from(document.getElementsByTagName("script")).find((element) => {
+                            return element.src.indexOf(url) !== -1;
+                        });
+                        if (!scriptExists) {
+                            app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_START");
+                            const script = document.createElement("script");
+                            script.onload = () => {
+                                app.fwkGetEventBus().emit("FWK_RESOURCE_LOADING_STOP");
+                                resolve();
+                            };
+                            script.onerror = () => {
+                                reject();
+                            };
+                            document.head.appendChild(script);
+                            script.src = url;
+                        } else {
+                            setTimeout(() => {
+                                resolve();
+                            }, 0);
+                        }
                     });
-
                 },
                 _callService: function (request) {
                     return new Promise((resolve, reject) => {
@@ -739,9 +756,6 @@
                             Vue.mixin(app.fwkUseMixin({ id: "FwkSocketIoMixin" }));
                             Vue.prototype.$socket = {
                                 _socket: null,
-                                isConnected: function () {
-                                    return !!this._socket;
-                                },
                                 sendMessage: function (params) {
                                     return new Promise((resolve) => {
                                         this._socket.emit("FWK_WS_SEND_MESSAGE", params, (response) => {
@@ -756,15 +770,24 @@
                                         });
                                     });
                                 },
-                                connect: function (url) {
-                                    if (!this.isConnected()) {
-                                        this._socket = io.connect(url);
-                                        handlers.forEach((handler) => {
-                                            this._socket.on(handler.name, (event) => {
-                                                app.fwkGetEventBus().emit(handler.name, event);
+                                connect: function (url, userData) {
+                                    return new Promise((resolve) => {
+                                        if (!this._socket) {
+                                            this._socket = io.connect(url);
+                                            handlers.forEach((handler) => {
+                                                this._socket.on(handler.name, (event) => {
+                                                    app.fwkGetEventBus().emit(handler.name, event);
+                                                });
                                             });
-                                        });
-                                    }
+                                            this._socket.emit("FWK_WS_SET_USER_DATA", userData, (response) => {
+                                                resolve();
+                                            });
+                                        } else {
+                                            setTimeout(() => {
+                                                resolve();
+                                            }, 0);
+                                        }
+                                    });
                                 }
                             };
                         }

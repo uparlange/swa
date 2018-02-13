@@ -1,7 +1,7 @@
 <div>
     <v-card>
         <v-tabs fixed-tabs>
-            <v-tab v-for="tab in tabs" :key="tab.label" :href="'#'+tab.link" @click="showTab(tab)">
+            <v-tab v-for="tab in tabs" :key="tab.label" :to="tab.link">
                 {{tab.label}}
             </v-tab>
             <v-tabs-items>
