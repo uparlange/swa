@@ -55,7 +55,7 @@
             app.fwkGetEventBus().on("FWK_APPLICATION_UPDATE_READY", () => {
                 const label = app.fwkGetLabel({ key: "LABEL_NEW_VERSION_AVAILABLE" });
                 if (confirm(label)) {
-                    window.location.reload();
+                    window.location.reload(true);
                 }
             });
             this._refreshProfileMenuLabel();

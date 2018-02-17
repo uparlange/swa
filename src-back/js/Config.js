@@ -11,17 +11,14 @@ const config = {
     getExpressWwwFolder: function () {
         return SRC_FRONT_PATH + (PROD_MODE ? "/prod" : "/dev");
     },
-    getExpressViewsConf: function () {
-        return {
-            engine: "pug",
-            folder: SRC_FRONT_PATH + "/views"
-        };
+    getExpressStaticsViewsConf: function () {
+        return JSON_CONFIG.expressStaticsViewsConf;
     },
-    getExpressStaticsLocales: function () {
-        return JSON_CONFIG.expressStaticsLocales;
+    getExpressStaticsLocalesConf: function () {
+        return JSON_CONFIG.expressStaticsLocalesConf;
     },
-    getExpressStaticsVendors: function () {
-        return JSON_CONFIG.expressStaticsVendors;
+    getExpressStaticsVendorsConf: function () {
+        return JSON_CONFIG.expressStaticsVendorsConf;
     },
     getPassportSecretOrKey: function () {
         return JSON_CONFIG.passportSecretOrKey;

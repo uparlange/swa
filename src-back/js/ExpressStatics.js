@@ -10,12 +10,12 @@ const init = function (instance) {
     const www = Config.getConfig().getExpressWwwFolder();
     instance.use(express.static(www));
     // locales
-    const esl = Config.getConfig().getExpressStaticsLocales();
-    instance.use(esl.path, express.static(esl.folder));
+    const localesConf = Config.getConfig().getExpressStaticsLocalesConf();
+    instance.use(localesConf.path, express.static(localesConf.folder));
     // vendors
-    const esv = Config.getConfig().getExpressStaticsVendors();
-    esv.forEach(function (vendor, index, array) {
-        instance.use(vendor.path, express.static(vendor.folder));
+    const vendorsConf = Config.getConfig().getExpressStaticsVendorsConf();
+    vendorsConf.vendors.forEach(function (vendor, index, array) {
+        instance.use(vendorsConf.path, express.static(vendor.folder));
     });
 };
 

@@ -5,7 +5,7 @@ const Config = require(__dirname + "/Config");
 const init = function (instance, AUTHENTICATED_SERVICE) {
     instance.get("/services/locales", function (req, res) {
         const locales = [];
-        Config.getConfig().getExpressStaticsLocales().files.forEach(function (file) {
+        Config.getConfig().getExpressStaticsLocalesConf().files.forEach(function (file) {
             locales.push(file.replace(".json", ""));
         });
         res.json({

@@ -1,7 +1,21 @@
 {
     "expressPort": "8080",
     "passportSecretOrKey": "mySuperSecretKey",
-    "expressStaticsLocales": {
+    "expressStaticsViewsConf": {
+        "folder": "src-front/views",
+        "engine": "pug",
+        "files": [
+            {
+                "path": "/",
+                "value": "index.pug"
+            },
+            {
+                "path": "/manifest",
+                "value": "manifest.pug"
+            }
+        ]
+    },
+    "expressStaticsLocalesConf": {
         "folder": "src-back/data/i18n",
         "path": "/data/i18n",
         "files": [
@@ -9,49 +23,55 @@
             "fr.json"
         ]
     },
-    "expressStaticsVendors": [
-        {
-            "folder": "node_modules/vue/dist",
-            "path": "/vendors",
-            "files": [
-                "vue.min.js"
-            ]
-        },
-        {
-            "folder": "node_modules/vue-router/dist",
-            "path": "/vendors",
-            "files": [
-                "vue-router.min.js"
-            ]
-        },
-        {
-            "folder": "node_modules/vue-resource/dist",
-            "path": "/vendors",
-            "files": [
-                "vue-resource.min.js"
-            ]
-        },
-        {
-            "folder": "node_modules/vue-i18n/dist",
-            "path": "/vendors",
-            "files": [
-                "vue-i18n.min.js"
-            ]
-        },
-        {
-            "folder": "node_modules/vuetify/dist",
-            "path": "/vendors",
-            "files": [
-                "vuetify.min.css",
-                "vuetify.min.js"
-            ]
-        },
-        {
-            "folder": "node_modules/socket.io-client/dist",
-            "path": "/vendors",
-            "files": [
-                "socket.io.js"
-            ]
-        }
-    ]
+    "expressStaticsVendorsConf": {
+        "path": "/vendors",
+        "vendors": [
+            {
+                "folder": "node_modules/vue/dist",
+                "files": [
+                    "vue.min.js"
+                ]
+            },
+            {
+                "folder": "node_modules/vue-router/dist",
+                "files": [
+                    "vue-router.min.js"
+                ]
+            },
+            {
+                "folder": "node_modules/vue-resource/dist",
+                "files": [
+                    "vue-resource.min.js"
+                ]
+            },
+            {
+                "folder": "node_modules/vue-i18n/dist",
+                "files": [
+                    "vue-i18n.min.js"
+                ]
+            },
+            {
+                "folder": "node_modules/vuetify/dist",
+                "files": [
+                    "vuetify.min.css",
+                    "vuetify.min.js"
+                ]
+            },
+            {
+                "folder": "node_modules/socket.io-client/dist",
+                "files": [
+                    "socket.io.js"
+                ]
+            },
+            {
+                "folder": "node_modules/material-design-icons/iconfont",
+                "files": [
+                    "MaterialIcons-Regular.eot",
+                    "MaterialIcons-Regular.woff2",
+                    "MaterialIcons-Regular.woff",
+                    "MaterialIcons-Regular.ttf"
+                ]
+            }
+        ]
+    }
 }

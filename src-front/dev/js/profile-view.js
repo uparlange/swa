@@ -40,7 +40,8 @@
             },
             _refreshData: function () {
                 // position
-                app.fwkGetCurrentLocation().then((location) => {
+                const key = "AIzaSyDPz8XK2JCEVWdw0kyIgdMKss_bsROGgq0";
+                app.fwkGetCurrentLocation(key).then((location) => {
                     this.location = location;
                 }, () => {
                     // TODO manage
