@@ -575,6 +575,9 @@
                             if (Fwk.manager.SecurityManager.isConnected() && response.status === 401) {
                                 Fwk.manager.SecurityManager.sessionTimedOut();
                             } else {
+                                if (typeof response.body !== "object") {
+                                    response.body = { message: "TECHNICAL_ERROR" };
+                                }
                                 reject(response);
                             }
                         });
@@ -681,7 +684,7 @@
                         // https://github.com/beebole/mobile-app-demo/blob/master/index.html
                         var iframe = document.createElement("iframe");
                         iframe.style.display = "none";
-                        iframe.src = "manifest";
+                        iframe.src = "/load-offline-cache";
                         document.body.appendChild(iframe);
                         window.addEventListener("load", function () {
                             window.applicationCache.addEventListener("updateready", function () {

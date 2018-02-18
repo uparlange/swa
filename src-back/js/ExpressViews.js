@@ -4,21 +4,15 @@ const pkg = require(__dirname + "/../../package.json");
 
 // body
 const init = function (instance) {
-    // init
-    const conf = Config.getConfig().getExpressStaticsViewsConf();
-    instance.set("views", conf.folder);
-    instance.set("view engine", conf.engine);
-    // index
-    instance.get("/", function (req, res) {
-        res.render("index", {
-            title: pkg.name.toUpperCase(),
-            vendorsConf: Config.getConfig().getExpressStaticsVendorsConf()
-        });
-    });
-    // manifest
-    instance.get("/manifest", function (req, res) {
-        res.render("manifest", {
-            title: pkg.name.toUpperCase()
+    const viewsConf = Config.getConfig().getExpressStaticsViewsConf();
+    instance.set("views", viewsConf.folder);
+    instance.set("view engine", viewsConf.engine);
+    viewsConf.files.forEach((file, index, array) => {
+        instance.get(file.path, function (req, res) {
+            res.render(file.value.split(".")[0], {
+                title: pkg.name.toUpperCase(),
+                vendorsConf: Config.getConfig().getExpressStaticsVendorsConf()
+            });
         });
     });
 };

@@ -10,8 +10,8 @@
                 "value": "index.pug"
             },
             {
-                "path": "/manifest",
-                "value": "manifest.pug"
+                "path": "/load-offline-cache",
+                "value": "load-offline-cache.pug"
             }
         ]
     },
