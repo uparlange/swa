@@ -10,8 +10,8 @@
                 "value": "index.pug"
             },
             {
-                "path": "/load-offline-cache",
-                "value": "load-offline-cache.pug"
+                "path": "/app-cache",
+                "value": "app-cache.pug"
             }
         ]
     },

@@ -63,7 +63,7 @@ gulp.task('generate-manifest', (callback) => {
     manifest += 'NETWORK:\n';
     manifest += '*\n';
     manifest += 'FALLBACK:\n';
-    fs.writeFileSync(SRC_FRONT + '/prod/offline.appcache', manifest);
+    fs.writeFileSync(SRC_FRONT + '/prod/app.cache', manifest);
     console.log('Manifest : ' + count + ' resource(s).');
     callback();
 });
