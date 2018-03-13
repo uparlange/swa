@@ -11,8 +11,8 @@ const config = {
     getExpressWwwFolder: function () {
         return SRC_FRONT_PATH + (PROD_MODE ? "/prod" : "/dev");
     },
-    getExpressStaticsViewsConf: function () {
-        return JSON_CONFIG.expressStaticsViewsConf;
+    getExpressViewsConf: function () {
+        return JSON_CONFIG.expressViewsConf;
     },
     getExpressStaticsLocalesConf: function () {
         return JSON_CONFIG.expressStaticsLocalesConf;

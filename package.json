@@ -1,8 +1,6 @@
 {
   "name": "swa",
-  "version": "1.0.21",
-  "description": "",
-  "main": "app.js",
+  "version": "1.0.22",
   "scripts": {
     "start": "node ./src-back/index.js",
     "debug": "nodemon ./src-back/index.js",
@@ -15,32 +13,32 @@
     "body-parser": "1.18.2",
     "compression": "1.7.2",
     "del": "3.0.0",
-    "express": "4.16.2",
+    "express": "4.16.3",
     "gulp": "4.0.0",
-    "gulp-clean-css": "3.9.2",
+    "gulp-clean-css": "3.9.3",
     "gulp-eslint": "4.0.2",
     "gulp-htmlclean": "2.7.20",
     "gulp-imagemin": "4.1.0",
     "gulp-jsdoc3": "1.0.1",
     "gulp-uglify-es": "1.0.1",
-    "jsonwebtoken": "8.1.1",
+    "jsonwebtoken": "8.2.0",
     "material-design-icons": "3.0.1",
     "passport": "0.4.0",
-    "passport-jwt": "3.0.1",
+    "passport-jwt": "4.0.0",
     "pouchdb-adapter-memory": "6.4.3",
     "pouchdb-adapter-node-websql": "6.4.3",
     "pouchdb-find": "6.4.3",
     "pouchdb-node": "6.4.3",
-    "pug": "2.0.0-rc.4",
+    "pug": "2.0.1",
     "socket.io": "2.0.4",
     "sw-precache": "5.2.1",
-    "vue": "2.5.13",
-    "vue-i18n": "7.4.2",
-    "vue-resource": "1.4.0",
+    "vue": "2.5.15",
+    "vue-i18n": "7.6.0",
+    "vue-resource": "1.5.0",
     "vue-router": "3.0.1",
-    "vuetify": "1.0.3"
+    "vuetify": "1.0.7"
   },
   "devDependencies": {
-    "nodemon": "1.15.1"
+    "nodemon": "1.17.1"
   }
 }

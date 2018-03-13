@@ -40,7 +40,7 @@ gulp.task('generate-manifest', (callback) => {
         });
     };
     readDir(baseDir);
-    const viewsConf = Config.getConfig().getExpressStaticsViewsConf();
+    const viewsConf = Config.getConfig().getExpressViewsConf();
     viewsConf.files.forEach((file, index, array) => {
         const value = file.path;
         manifest += value + '\n';
@@ -69,7 +69,7 @@ gulp.task('generate-manifest', (callback) => {
 });
 
 gulp.task('clean', () => {
-    return del([SRC_FRONT + '/dev/js/fwk-pwa-service-worker.js', SRC_FRONT + '/prod']);
+    return del([SRC_FRONT + '/dev/fwk-pwa-service-worker.js', SRC_FRONT + '/prod']);
 });
 
 gulp.task('analyze-js', () => {
@@ -96,7 +96,7 @@ gulp.task('generate-service-worker', (callback) => {
     const rootDir = SRC_FRONT + '/prod';
     const fileName = 'fwk-pwa-service-worker.js';
     const dynamicUrlToDependencies = {};
-    const viewsConf = Config.getConfig().getExpressStaticsViewsConf();
+    const viewsConf = Config.getConfig().getExpressViewsConf();
     viewsConf.files.forEach((file, index, array) => {
         dynamicUrlToDependencies[file.path] = [viewsConf.folder + '/' + file.value];
     });
@@ -110,14 +110,14 @@ gulp.task('generate-service-worker', (callback) => {
             dynamicUrlToDependencies[vendorsConf.path + '/' + file] = [vendor.folder + '/' + file];
         });
     });
-    swPrecache.write(SRC_FRONT + '/dev/js/' + fileName, {
+    swPrecache.write(SRC_FRONT + '/dev/' + fileName, {
         staticFileGlobs: [
             rootDir + '/**/*'
         ],
         dynamicUrlToDependencies: dynamicUrlToDependencies,
         stripPrefix: rootDir,
     }, function () {
-        gulp.src(SRC_FRONT + '/dev/js/' + fileName).pipe(uglify()).pipe(gulp.dest(SRC_FRONT + '/prod/js/'));
+        gulp.src(SRC_FRONT + '/dev/' + fileName).pipe(uglify()).pipe(gulp.dest(SRC_FRONT + '/prod/'));
         callback();
     });
 });

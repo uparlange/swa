@@ -1,7 +1,7 @@
 {
     "expressPort": "8080",
     "passportSecretOrKey": "mySuperSecretKey",
-    "expressStaticsViewsConf": {
+    "expressViewsConf": {
         "folder": "src-front/views",
         "engine": "pug",
         "files": [

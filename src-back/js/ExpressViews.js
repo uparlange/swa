@@ -4,7 +4,7 @@ const pkg = require(__dirname + "/../../package.json");
 
 // body
 const init = function (instance) {
-    const viewsConf = Config.getConfig().getExpressStaticsViewsConf();
+    const viewsConf = Config.getConfig().getExpressViewsConf();
     instance.set("views", viewsConf.folder);
     instance.set("view engine", viewsConf.engine);
     viewsConf.files.forEach((file, index, array) => {

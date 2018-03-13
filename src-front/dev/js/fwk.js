@@ -657,7 +657,7 @@
                     if (serviceWorkerAvailable) {
                         // https://github.com/GoogleChromeLabs/sw-precache/blob/master/demo/app/js/service-worker-registration.js
                         window.addEventListener("load", function () {
-                            navigator.serviceWorker.register("/js/fwk-pwa-service-worker.js").then(function (reg) {
+                            navigator.serviceWorker.register("/fwk-pwa-service-worker.js").then(function (reg) {
                                 reg.onupdatefound = function () {
                                     var installingWorker = reg.installing;
                                     installingWorker.onstatechange = function () {
