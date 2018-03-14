@@ -1,6 +1,6 @@
 {
   "name": "swa",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "scripts": {
     "start": "node ./src-back/index.js",
     "debug": "nodemon ./src-back/index.js",
