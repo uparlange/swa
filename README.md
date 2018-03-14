@@ -21,3 +21,4 @@ https://s-w-a.herokuapp.com
 # Technical
 * JSDoc for developpers : https://s-w-a.herokuapp.com/doc
 * Favicon Generator : https://realfavicongenerator.net/
+* iOS Splash screens : https://github.com/applification/pwa-splash-screens
