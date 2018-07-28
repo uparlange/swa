@@ -13,7 +13,7 @@ https://s-w-a.herokuapp.com
 
 ### Locally
 1. Clone repository
-2. Run command "npm install" to load dependencies
+2. Run command "npm install" to load dependencies (make sure to have [node-gyp](https://github.com/nodejs/node-gyp#installation) correctly installed)
 3. Run command "npm start" or "npm run debug" (to have automatic restart with nodemon when code changes)
 4. Open your favorite browser and launch "http://localhost:8080" 
 > You can change port in "src-back/data/config.json"
