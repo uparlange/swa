@@ -29,7 +29,7 @@
     "pouchdb-adapter-node-websql": "7.0.0",
     "pouchdb-find": "7.0.0",
     "pouchdb-node": "7.0.0",
-    "pug": "2.0.3",
+    "pug": "3.0.1",
     "socket.io": "2.2.0",
     "sw-precache": "5.2.1",
     "vue": "2.6.10",
